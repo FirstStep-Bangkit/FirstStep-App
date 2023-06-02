@@ -1,4 +1,4 @@
-package com.example.firststepapp.ui.main.home
+package com.example.firststepapp.ui.main.personality
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,7 +8,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 @Composable
-fun Home (
+fun Personality (
     modifier : Modifier = Modifier
 ){
     Box(
@@ -16,7 +16,7 @@ fun Home (
         contentAlignment = Alignment.Center,
     ) {
         Text(
-            text = "Home"
+            text = "Personality"
         )
     }
 }
