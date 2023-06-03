@@ -6,6 +6,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,6 +22,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -88,6 +90,7 @@ fun Register(
         var email by remember { mutableStateOf("") }
         var password by remember { mutableStateOf("") }
         var confirmPassword by remember { mutableStateOf("") }
+        var passwordMatch by remember { mutableStateOf(false) }
 
         //Nama Depan
         BasicTextField(
@@ -101,7 +104,7 @@ fun Register(
                     RoundedCornerShape(size = 10.dp)
                 ),
             decorationBox = { innerTextField ->
-                Row(
+                Box(
                     Modifier
                         .background(Color.Transparent)
                         .padding(10.dp)
@@ -130,7 +133,7 @@ fun Register(
                     RoundedCornerShape(size = 10.dp)
                 ),
             decorationBox = { innerTextField ->
-                Row(
+                Box(
                     Modifier
                         .background(Color.Transparent)
                         .padding(10.dp)
@@ -159,7 +162,7 @@ fun Register(
                     RoundedCornerShape(size = 10.dp)
                 ),
             decorationBox = { innerTextField ->
-                Row(
+                Box(
                     Modifier
                         .background(Color.Transparent)
                         .padding(10.dp)
@@ -179,7 +182,10 @@ fun Register(
         //Password
         BasicTextField(
             value = password,
-            onValueChange = { password = it },
+            onValueChange = {
+                password = it
+                //passwordMatch = password != confirmPassword
+            },
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier
                 .padding(bottom = 10.dp)
@@ -189,7 +195,7 @@ fun Register(
                     RoundedCornerShape(size = 10.dp)
                 ),
             decorationBox = { innerTextField ->
-                Row(
+                Box(
                     Modifier
                         .background(Color.Transparent)
                         .padding(10.dp)
@@ -209,7 +215,10 @@ fun Register(
         //Konfirmasi Password
         BasicTextField(
             value = confirmPassword,
-            onValueChange = { confirmPassword = it },
+            onValueChange = {
+                confirmPassword = it
+                passwordMatch = password != confirmPassword
+            },
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier
                 .padding(bottom = 10.dp)
@@ -219,7 +228,7 @@ fun Register(
                     RoundedCornerShape(size = 10.dp)
                 ),
             decorationBox = { innerTextField ->
-                Row(
+                Box(
                     Modifier
                         .background(Color.Transparent)
                         .padding(10.dp)
@@ -236,9 +245,32 @@ fun Register(
             },
         )
 
+        // Validasi konfirmasi password
+        if (passwordMatch) {
+            Text(
+                text = "Password tidak sesuai",
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.padding(start = 8.dp, top = 4.dp)
+            )
+        }
+
         //Tombol daftar
+        val isButtonEnabled by remember {
+            derivedStateOf {
+                firstName.text.isNotBlank() &&
+                lastName.text.isNotBlank() &&
+                email.isNotBlank() &&
+                password.isNotBlank() &&
+                confirmPassword.isNotBlank() &&
+                !passwordMatch
+            }
+        }
+
         Button(
-            onClick = { /*TODO*/ },
+            onClick = {
+                /*Todo*/
+            },
             modifier = Modifier
                 .padding(top = 40.dp)
                 .width(154.dp),
@@ -247,7 +279,8 @@ fun Register(
                 defaultElevation = 5.dp,
                 pressedElevation = 0.dp,
                 disabledElevation = 0.dp
-            )
+            ),
+            enabled = isButtonEnabled
         ) {
             Text(
                 text = "Daftar",
