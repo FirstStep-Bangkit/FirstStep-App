@@ -28,22 +28,26 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.firststepapp.R
 import com.example.firststepapp.navigation.Screen
 import com.example.firststepapp.ui.theme.FirstStepAppTheme
+import com.example.firststepapp.viewmodel.AuthViewModel
 
 @Composable
 fun Login(
     navController: NavHostController,
-    onBackPressed: () -> Unit
+    onBackPressed: () -> Unit,
+    viewModel: AuthViewModel
 ){
     val backDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
 
@@ -84,6 +88,8 @@ fun Login(
 
         var email by remember { mutableStateOf("") }
         var password by remember { mutableStateOf("") }
+
+        val context = LocalContext.current
 
         //Email
         BasicTextField(
@@ -146,7 +152,15 @@ fun Login(
 
         //Tombol daftar
         Button(
-            onClick = { /*TODO*/ },
+            onClick = {
+                viewModel.login(context, email, password) {success ->
+                    if (success){
+                        navController.navigate(Screen.Home.route) {
+                            popUpTo(Screen.Login.route) { inclusive = true }
+                        }
+                    }
+                }
+            },
             modifier = Modifier
                 .padding(top = 40.dp)
                 .width(154.dp),
@@ -191,11 +205,11 @@ fun Login(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun LoginPreview(){
-    val navController = rememberNavController()
-    FirstStepAppTheme {
-        Login(navController, onBackPressed = {})
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun LoginPreview(){
+//    val navController = rememberNavController()
+//    FirstStepAppTheme {
+//        Login(navController, onBackPressed = {})
+//    }
+//}

@@ -27,9 +27,12 @@ fun FirstStepApp () {
             SplashScreen(navController)
         }
         composable(Screen.Login.route) {
-            Login(navController) {
+            val viewModel: AuthViewModel = viewModel(
+                factory = ViewModelFactory(UserPreferences.getInstance(LocalContext.current.dataStore))
+            )
+            Login(navController, onBackPressed =  {
                 exitProcess(0)
-            }
+            },viewModel = viewModel)
         }
         composable(Screen.Register.route) {
             val viewModel: AuthViewModel = viewModel(
