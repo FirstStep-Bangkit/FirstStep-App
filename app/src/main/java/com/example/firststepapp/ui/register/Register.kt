@@ -16,12 +16,14 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.ClickableText
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,6 +43,7 @@ import androidx.navigation.NavHostController
 import com.example.firststepapp.R
 import com.example.firststepapp.navigation.Screen
 import com.example.firststepapp.viewmodel.AuthViewModel
+import kotlinx.coroutines.delay
 
 @Composable
 fun Register(
@@ -92,6 +95,9 @@ fun Register(
         var confirmPassword by remember { mutableStateOf("") }
         var passwordMatch by remember { mutableStateOf(false) }
 
+        var registerStatus by remember { mutableStateOf(RegisterStatus.NONE) }
+        var registerMessage by remember { mutableStateOf("") }
+
         val context = LocalContext.current
 
         //Nama Depan
@@ -115,7 +121,7 @@ fun Register(
                     if (firstName.text.isEmpty()) {
                         Text(
                             text = "Nama Depan",
-                            style = MaterialTheme.typography.bodySmall
+                            style = MaterialTheme.typography.bodyMedium
                         )
                     }
                     innerTextField()
@@ -144,7 +150,7 @@ fun Register(
                     if (lastName.text.isEmpty()) {
                         Text(
                             text = "Nama Belakang",
-                            style = MaterialTheme.typography.bodySmall
+                            style = MaterialTheme.typography.bodyMedium
                         )
                     }
                     innerTextField()
@@ -173,7 +179,7 @@ fun Register(
                     if (email.isEmpty()) {
                         Text(
                             text = "Email",
-                            style = MaterialTheme.typography.bodySmall
+                            style = MaterialTheme.typography.bodyMedium
                         )
                     }
                     innerTextField()
@@ -206,7 +212,7 @@ fun Register(
                     if (password.isEmpty()) {
                         Text(
                             text = "Password",
-                            style = MaterialTheme.typography.bodySmall
+                            style = MaterialTheme.typography.bodyMedium
                         )
                     }
                     innerTextField()
@@ -239,7 +245,7 @@ fun Register(
                     if (confirmPassword.isEmpty()) {
                         Text(
                             text = "Konfirmasi Password",
-                            style = MaterialTheme.typography.bodySmall
+                            style = MaterialTheme.typography.bodyMedium
                         )
                     }
                     innerTextField()
@@ -272,9 +278,14 @@ fun Register(
             onClick = {
                 viewModel.register(context, firstName.text, lastName.text, email, password) { success ->
                     if (success) {
+                        registerStatus = RegisterStatus.SUCCESS
+                        registerMessage = "Register berhasil"
                         navController.navigate(Screen.Login.route) {
                             popUpTo(Screen.Register.route) { inclusive = true }
                         }
+                    } else {
+                        registerStatus = RegisterStatus.FAILURE
+                        registerMessage = "Register gagal"
                     }
                 }
             },
@@ -295,6 +306,36 @@ fun Register(
             )
         }
 
+        if (registerStatus != RegisterStatus.NONE) {
+            AlertDialog(
+                onDismissRequest = {
+                    registerStatus = RegisterStatus.NONE
+                },
+                title = {
+                    Text(text = if (registerStatus == RegisterStatus.SUCCESS) "Sukses" else "Gagal")
+                },
+                text = {
+                    Text(text = registerMessage)
+                },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            registerStatus = RegisterStatus.NONE
+                        }
+                    ) {
+                        Text("OK")
+                    }
+                }
+            )
+        }
+
+        LaunchedEffect(registerStatus) {
+            if (registerStatus == RegisterStatus.SUCCESS) {
+                delay(2000L)
+                registerStatus = RegisterStatus.NONE
+            }
+        }
+
         //Konfirmasi punya akun atau belum
         Row(
             modifier = Modifier
@@ -304,7 +345,7 @@ fun Register(
         ) {
             Text(
                 text = "Sudah punya akun?",
-                style = MaterialTheme.typography.bodySmall
+                style = MaterialTheme.typography.bodyMedium
             )
             ClickableText(
                 onClick = {
@@ -315,7 +356,7 @@ fun Register(
                         start = 5.dp
                     ),
                 text = AnnotatedString("Masuk"),
-                style = MaterialTheme.typography.bodySmall.copy(
+                style = MaterialTheme.typography.bodyMedium.copy(
                     color = MaterialTheme.colorScheme.primary
                 )
             )
