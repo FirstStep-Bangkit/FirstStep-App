@@ -30,7 +30,7 @@ class AuthViewModel (private val preference : UserPreferences) : ViewModel() {
         private const val TAG = "AutentikasiViewModel"
     }
 
-    fun register (token: Context, frontName: String, lastName: String, email: String, password: String){
+    fun register (token: Context, frontName: String, lastName: String, email: String, password: String, callback: (Boolean) -> Unit){
         _isLoading.value = true
         val client = ApiConfig.getApiService(token).register(frontName, lastName, email, password)
         client.enqueue(object : Callback<RegisterResponse> {
@@ -42,14 +42,17 @@ class AuthViewModel (private val preference : UserPreferences) : ViewModel() {
                 val responseBody = response.body()
                 if (response.isSuccessful && responseBody != null) {
                     registerResponse.value = response.body()
+                    callback(true)
                 } else {
                     Log.e(TAG, "onFailure: ${response.message()}")
+                    callback(false)
                 }
             }
 
             override fun onFailure(call: Call<RegisterResponse>, t: Throwable) {
                 _isLoading.value = false
                 Log.e(TAG, "onFailure: ${t.message}")
+                callback(false)
             }
         })
     }

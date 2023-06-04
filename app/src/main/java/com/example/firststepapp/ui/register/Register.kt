@@ -261,7 +261,6 @@ fun Register(
         val isButtonEnabled by remember {
             derivedStateOf {
                 firstName.text.isNotBlank() &&
-                lastName.text.isNotBlank() &&
                 email.isNotBlank() &&
                 password.isNotBlank() &&
                 confirmPassword.isNotBlank() &&
@@ -271,11 +270,13 @@ fun Register(
 
         Button(
             onClick = {
-                viewModel.register(context,
-                    firstName.text,
-                    lastName.text,
-                    email,
-                    password)
+                viewModel.register(context, firstName.text, lastName.text, email, password) { success ->
+                    if (success) {
+                        navController.navigate(Screen.Login.route) {
+                            popUpTo(Screen.Register.route) { inclusive = true }
+                        }
+                    }
+                }
             },
             modifier = Modifier
                 .padding(top = 40.dp)
