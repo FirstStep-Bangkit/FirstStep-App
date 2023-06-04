@@ -43,7 +43,10 @@ import androidx.navigation.NavHostController
 import com.example.firststepapp.R
 import com.example.firststepapp.navigation.Screen
 import com.example.firststepapp.viewmodel.AuthViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun Register(
@@ -97,6 +100,7 @@ fun Register(
 
         var registerStatus by remember { mutableStateOf(RegisterStatus.NONE) }
         var registerMessage by remember { mutableStateOf("") }
+        var showRegisterStatus by remember { mutableStateOf(false) }
 
         val context = LocalContext.current
 
@@ -280,12 +284,22 @@ fun Register(
                     if (success) {
                         registerStatus = RegisterStatus.SUCCESS
                         registerMessage = "Register berhasil"
+                        showRegisterStatus = true
+
+                        CoroutineScope(Dispatchers.Main).launch {
+                            delay(5000L)
+                            registerStatus = RegisterStatus.NONE
+                            showRegisterStatus = false
+                        }
+
                         navController.navigate(Screen.Login.route) {
                             popUpTo(Screen.Register.route) { inclusive = true }
                         }
+
                     } else {
                         registerStatus = RegisterStatus.FAILURE
                         registerMessage = "Register gagal"
+                        showRegisterStatus = true
                     }
                 }
             },
@@ -327,13 +341,6 @@ fun Register(
                     }
                 }
             )
-        }
-
-        LaunchedEffect(registerStatus) {
-            if (registerStatus == RegisterStatus.SUCCESS) {
-                delay(2000L)
-                registerStatus = RegisterStatus.NONE
-            }
         }
 
         //Konfirmasi punya akun atau belum
