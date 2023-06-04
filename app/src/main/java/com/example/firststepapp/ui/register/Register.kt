@@ -30,23 +30,23 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.example.firststepapp.R
 import com.example.firststepapp.navigation.Screen
-import com.example.firststepapp.ui.theme.FirstStepAppTheme
+import com.example.firststepapp.viewmodel.AuthViewModel
 
 @Composable
 fun Register(
     navController: NavHostController,
-    onBackPressed: () -> Unit
+    onBackPressed: () -> Unit,
+    viewModel: AuthViewModel
 ){
     val backDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
 
@@ -91,6 +91,8 @@ fun Register(
         var password by remember { mutableStateOf("") }
         var confirmPassword by remember { mutableStateOf("") }
         var passwordMatch by remember { mutableStateOf(false) }
+
+        val context = LocalContext.current
 
         //Nama Depan
         BasicTextField(
@@ -269,7 +271,11 @@ fun Register(
 
         Button(
             onClick = {
-                /*Todo*/
+                viewModel.register(context,
+                    firstName.text,
+                    lastName.text,
+                    email,
+                    password)
             },
             modifier = Modifier
                 .padding(top = 40.dp)
@@ -316,11 +322,11 @@ fun Register(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun RegisterPreview(){
-    val navController = rememberNavController()
-    FirstStepAppTheme {
-        Register(navController, onBackPressed = {})
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun RegisterPreview(){
+//    val navController = rememberNavController()
+//    FirstStepAppTheme {
+//        Register(navController, onBackPressed = {})
+//    }
+//}
