@@ -155,7 +155,7 @@ fun Login(
             onClick = {
                 viewModel.login(context, email, password) {success ->
                     if (success){
-                        navController.navigate(Screen.Home.route) {
+                        navController.navigate(Screen.Main.route) {
                             popUpTo(Screen.Login.route) { inclusive = true }
                         }
                     }

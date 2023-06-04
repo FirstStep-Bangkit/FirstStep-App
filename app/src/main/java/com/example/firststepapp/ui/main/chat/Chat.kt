@@ -6,10 +6,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavHostController
+import com.example.firststepapp.viewmodel.AuthViewModel
 
 @Composable
 fun Chat (
-    modifier : Modifier = Modifier
+    modifier: Modifier,
+    navControl: NavHostController
+    //authViewModel: AuthViewModel
 ){
     Box(
         modifier = modifier.fillMaxSize(),

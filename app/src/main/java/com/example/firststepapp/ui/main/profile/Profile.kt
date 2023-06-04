@@ -7,11 +7,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.navigation.NavHostController
 import com.example.firststepapp.R
+import com.example.firststepapp.viewmodel.AuthViewModel
 
 @Composable
 fun Profile (
-    modifier : Modifier = Modifier
+    modifier: Modifier,
+    navControl: NavHostController
+    //authViewModel: AuthViewModel
 ){
     Box(
         modifier = modifier.fillMaxSize(),

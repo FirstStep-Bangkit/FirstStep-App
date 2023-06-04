@@ -12,12 +12,16 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.ViewModelStore
+import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -26,43 +30,56 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.firststepapp.navigation.NavigationItem
 import com.example.firststepapp.navigation.Screen
+import com.example.firststepapp.preferences.UserPreferences
+import com.example.firststepapp.preferences.dataStore
 import com.example.firststepapp.ui.main.chat.Chat
 import com.example.firststepapp.ui.main.home.Home
 import com.example.firststepapp.ui.main.personality.Personality
 import com.example.firststepapp.ui.main.test.Test
-import com.example.firststepapp.ui.theme.FirstStepAppTheme
+import com.example.firststepapp.viewmodel.AuthViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainApp(
     modifier: Modifier = Modifier,
-    navControl: NavHostController = rememberNavController()
-){
-    Scaffold(
-        bottomBar = {
-            BottomBar(navControl)
-        },
-        modifier = Modifier
-    ){ innerPadding ->
-        NavHost(
-            navController = navControl,
-            startDestination = Screen.Home.route,
-            modifier = Modifier.padding(innerPadding)
-        ){
-            composable(Screen.Home.route) {
-                Home()
-            }
-            composable(Screen.Chat.route) {
-                Chat()
-            }
-            composable(Screen.Test.route) {
-                Test()
-            }
-            composable(Screen.Personality.route){
-                Personality()
+    navControl: NavHostController,
+    viewModel: AuthViewModel
+) {
+    val viewModelStoreOwner = LocalContext.current as ViewModelStoreOwner
+    navControl.setViewModelStore(viewModelStoreOwner.viewModelStore)
+
+    CompositionLocalProvider(LocalAuthViewModel provides viewModel) {
+        Scaffold(
+            bottomBar = {
+                BottomBar(navControl)
+            },
+            modifier = modifier
+        ) { innerPadding ->
+            NavHost(
+                navController = navControl,
+                startDestination = Screen.Home.route,
+                modifier = Modifier.padding(innerPadding)
+            ) {
+                composable(Screen.Home.route) {
+                    Home(modifier, navControl)
+                }
+                composable(Screen.Chat.route) {
+                    Chat(modifier, navControl)
+                }
+                composable(Screen.Test.route) {
+                    Test(modifier, navControl)
+                }
+                composable(Screen.Personality.route) {
+                    Personality(modifier, navControl)
+                }
             }
         }
     }
+}
+
+
+private val LocalAuthViewModel = staticCompositionLocalOf<AuthViewModel> {
+    error("No AuthViewModel provided")
 }
 
 @Composable
@@ -121,10 +138,10 @@ fun BottomBar(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun HomePreview() {
-    FirstStepAppTheme {
-        MainApp()
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun HomePreview() {
+//    FirstStepAppTheme {
+//        MainApp()
+//    }
+//}
