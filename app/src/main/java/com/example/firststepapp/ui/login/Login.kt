@@ -1,5 +1,7 @@
 package com.example.firststepapp.ui.login
 
+import android.content.ContentValues.TAG
+import android.util.Log
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.Image
@@ -15,12 +17,14 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.ClickableText
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,22 +37,21 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.example.firststepapp.R
 import com.example.firststepapp.navigation.Screen
-import com.example.firststepapp.ui.theme.FirstStepAppTheme
 import com.example.firststepapp.viewmodel.AuthViewModel
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.*
+import androidx.compose.runtime.rememberUpdatedState
 
 @Composable
 fun Login(
     navController: NavHostController,
     onBackPressed: () -> Unit,
     viewModel: AuthViewModel
-){
+) {
     val backDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
 
     DisposableEffect(backDispatcher) {
@@ -90,8 +93,9 @@ fun Login(
         var password by remember { mutableStateOf("") }
 
         val context = LocalContext.current
+        val showDialog = remember { mutableStateOf(false) }
 
-        //Email
+        // Email
         BasicTextField(
             value = email,
             onValueChange = { email = it },
@@ -120,7 +124,7 @@ fun Login(
             },
         )
 
-        //Password
+        // Password
         BasicTextField(
             value = password,
             onValueChange = { password = it },
@@ -150,14 +154,28 @@ fun Login(
             },
         )
 
-        //Tombol daftar
         Button(
             onClick = {
-                viewModel.login(context, email, password) {success ->
-                    if (success){
-                        navController.navigate(Screen.Home.route) {
-                            popUpTo(Screen.Login.route) { inclusive = true }
+                viewModel.login(context, email, password)
+                val loginResponse = viewModel._loginResponse.value
+                loginResponse?.let { response ->
+                    if (!response.error!!) {
+                        val token = response.loginResult?.token
+                        val name = response.loginResult?.name
+                        val email = response.loginResult?.email
+                        val username = response.loginResult?.username
+
+                        Log.e(TAG,"Login username $username")
+
+                        if (token != null && name != null && email != null && username != null) {
+                            //viewModel.saveLoginSession(token, name, email, username)
+                            Log.e(TAG,"Login name $name")
+                            navController.navigate(Screen.Chat.route) {
+                                popUpTo(Screen.Login.route) { inclusive = true }
+                            }
                         }
+                    } else {
+                        showDialog.value = true
                     }
                 }
             },
@@ -165,24 +183,41 @@ fun Login(
                 .padding(top = 40.dp)
                 .width(154.dp),
             shape = RoundedCornerShape(size = 10.dp),
-            elevation =  ButtonDefaults.buttonElevation(
+            elevation = ButtonDefaults.buttonElevation(
                 defaultElevation = 5.dp,
                 pressedElevation = 0.dp,
                 disabledElevation = 0.dp
-            )
+            ),
         ) {
             Text(
-                text = "Daftar",
+                text = "Login",
                 style = MaterialTheme.typography.bodyMedium
             )
         }
 
-        //Konfirmasi punya akun atau belum
+        if (showDialog.value) {
+            AlertDialog(
+                onDismissRequest = { showDialog.value = false },
+                title = {
+                    Text(text = "Kesalahan")
+                },
+                text = {
+                    Text(text = "Login gagal, silahkan coba lagi !!!")
+                },
+                confirmButton = {
+                    Button(
+                        onClick = { showDialog.value = false },
+                    ) {
+                        Text(text = "Tutup")
+                    }
+                }
+            )
+        }
+
+        // Konfirmasi punya akun atau belum
         Row(
             modifier = Modifier
-                .padding(
-                    top = 10.dp
-                )
+                .padding(top = 10.dp)
         ) {
             Text(
                 text = "Belum punya akun?",
@@ -190,12 +225,12 @@ fun Login(
             )
             ClickableText(
                 onClick = {
-                    navController.navigate(Screen.Register.route)
+                    navController.navigate(Screen.Register.route) {
+                        popUpTo(Screen.Login.route) { inclusive = true }
+                    }
                 },
                 modifier = Modifier
-                    .padding(
-                        start = 5.dp
-                    ),
+                    .padding(start = 5.dp),
                 text = AnnotatedString("Daftar"),
                 style = MaterialTheme.typography.bodySmall.copy(
                     color = MaterialTheme.colorScheme.primary

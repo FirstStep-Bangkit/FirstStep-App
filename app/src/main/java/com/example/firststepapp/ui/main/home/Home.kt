@@ -23,7 +23,8 @@ import com.example.firststepapp.viewmodel.AuthViewModel
 
 @Composable
 fun Home (
-    navControl: NavHostController
+    navControl: NavHostController,
+    viewModel: AuthViewModel
 ){
 
 }
@@ -54,11 +55,11 @@ fun Headline(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun HomePreview(){
-    FirstStepAppTheme() {
-        val navController = rememberNavController()
-        Home(navController)
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun HomePreview(){
+//    FirstStepAppTheme() {
+//        val navController = rememberNavController()
+//        Home(navController)
+//    }
+//}

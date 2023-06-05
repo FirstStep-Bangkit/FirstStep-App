@@ -9,6 +9,7 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.firststepapp.api.ApiConfig
 import com.example.firststepapp.api.response.LoginResponse
+import com.example.firststepapp.api.response.LoginResult
 import com.example.firststepapp.api.response.RegisterResponse
 import com.example.firststepapp.preferences.UserPreferences
 import kotlinx.coroutines.launch
@@ -24,7 +25,8 @@ class AuthViewModel (private val preference : UserPreferences) : ViewModel() {
     private val registerResponse = MutableLiveData<RegisterResponse>()
     val _registerResponse : LiveData<RegisterResponse> = registerResponse
 
-    private val loginResponse =  MutableLiveData<LoginResponse>()
+    val loginResponse =  MutableLiveData<LoginResponse>()
+    val _loginResponse : LiveData<LoginResponse> = loginResponse
 
     companion object{
         private const val TAG = "AutentikasiViewModel"
@@ -57,7 +59,7 @@ class AuthViewModel (private val preference : UserPreferences) : ViewModel() {
         })
     }
 
-    fun login (token: Context, email: String, password: String, callback: (Boolean) -> Unit){
+    fun login (token: Context, email: String, password: String){
         _isLoading.value = true
         val client = ApiConfig.getApiService(token).login(email, password)
         client.enqueue(object : Callback<LoginResponse> {
@@ -80,17 +82,14 @@ class AuthViewModel (private val preference : UserPreferences) : ViewModel() {
                             Log.d("AutentikasiViewModel", "Saving token=$token, email=$email, name=$name, username=$username")
                         }
                     }
-                    callback(true)
                 } else {
                     Log.e(TAG, "onFailure: ${response.message()}")
-                    callback(false)
                 }
             }
 
             override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
                 _isLoading.value = false
                 Log.e(TAG, "onFailure: ${t.message}")
-                callback(false)
             }
         })
     }

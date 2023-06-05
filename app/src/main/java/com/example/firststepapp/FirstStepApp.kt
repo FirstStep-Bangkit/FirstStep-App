@@ -15,7 +15,8 @@ import com.example.firststepapp.navigation.Screen
 import com.example.firststepapp.preferences.UserPreferences
 import com.example.firststepapp.preferences.dataStore
 import com.example.firststepapp.ui.login.Login
-import com.example.firststepapp.ui.main.MainApp
+import com.example.firststepapp.ui.main.chat.Chat
+import com.example.firststepapp.ui.main.home.Home
 import com.example.firststepapp.ui.register.Register
 import com.example.firststepapp.ui.splashscreen.SplashScreen
 import com.example.firststepapp.ui.theme.FirstStepAppTheme
@@ -47,12 +48,17 @@ fun FirstStepApp() {
             composable(Screen.Register.route) {
                 Register(
                     navController = navController,
-                    onBackPressed = { exitProcess(0) },
                     viewModel = authViewModel
                 )
             }
-            composable(Screen.Main.route) {
-                MainApp(
+            composable(Screen.Home.route) {
+                Home(
+                    navControl = navController,
+                    viewModel = authViewModel
+                )
+            }
+            composable(Screen.Chat.route) {
+                Chat(
                     navControl = navController,
                     viewModel = authViewModel
                 )

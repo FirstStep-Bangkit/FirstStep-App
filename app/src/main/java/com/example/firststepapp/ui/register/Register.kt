@@ -51,23 +51,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun Register(
     navController: NavHostController,
-    onBackPressed: () -> Unit,
     viewModel: AuthViewModel
 ){
-    val backDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
-
-    DisposableEffect(backDispatcher) {
-        val callback = object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                onBackPressed()
-            }
-        }
-        backDispatcher?.addCallback(callback)
-        onDispose {
-            callback.remove()
-        }
-    }
-
     Column(
         modifier = Modifier
             .padding(40.dp)
