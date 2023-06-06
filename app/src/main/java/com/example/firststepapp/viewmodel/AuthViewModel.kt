@@ -100,7 +100,7 @@ class AuthViewModel (private val preference : UserPreferences) : ViewModel() {
             "token" -> preference.getToken().asLiveData()
             "name" -> preference.getName().asLiveData()
             "username" -> preference.getUsername().asLiveData()
-            else -> preference.getUsername().asLiveData()
+            else -> preference.getToken().asLiveData()
         }.also { liveData ->
             liveData.observeForever {
                 Log.e("UserPreferences", "Retrieved user preference: $property =$it")

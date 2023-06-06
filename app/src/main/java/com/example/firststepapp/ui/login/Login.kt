@@ -1,6 +1,5 @@
 package com.example.firststepapp.ui.login
 
-import android.content.ContentValues.TAG
 import android.util.Log
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
@@ -33,16 +32,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
 import androidx.navigation.NavHostController
 import com.example.firststepapp.R
 import com.example.firststepapp.navigation.Screen
@@ -166,7 +161,7 @@ fun Login(
                 viewModel.login(context, email, password)
 
                 viewModel.getUserPreferences("Token").observe(context as LifecycleOwner) { token ->
-                    Log.e("AutentikasiActivity", "Token berubah : $token")
+                    Log.e("AutentikasiActivity", "Token : $token")
                     if (token != preferenceDefaultValue) {
                         Log.e("AutentikasiActivity : ", "Menuju ke MainActivity")
                         if (viewModel.login(context, email, password) != null) {
