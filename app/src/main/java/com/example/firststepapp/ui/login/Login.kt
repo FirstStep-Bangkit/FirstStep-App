@@ -45,6 +45,8 @@ import com.example.firststepapp.viewmodel.AuthViewModel
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.*
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 
 @Composable
 fun Login(
@@ -154,28 +156,36 @@ fun Login(
             },
         )
 
+        var loginClicked = false
+
         Button(
             onClick = {
-                viewModel.login(context, email, password)
-                val loginResponse = viewModel._loginResponse.value
-                loginResponse?.let { response ->
-                    if (!response.error!!) {
-                        val token = response.loginResult?.token
-                        val name = response.loginResult?.name
-                        val email = response.loginResult?.email
-                        val username = response.loginResult?.username
+                if (!loginClicked) {
+                    loginClicked = true
+                    viewModel.login(context, email, password)
 
-                        Log.e(TAG,"Login username $username")
+                    viewModel._loginResponse.observeOnce { loginResponse ->
+                        loginResponse?.let { response ->
+                            if (!response.error!!) {
+                                val token = response.loginResult?.token
+                                val name = response.loginResult?.name
+                                val email = response.loginResult?.email
+                                val username = response.loginResult?.username
 
-                        if (token != null && name != null && email != null && username != null) {
-                            //viewModel.saveLoginSession(token, name, email, username)
-                            Log.e(TAG,"Login name $name")
-                            navController.navigate(Screen.Chat.route) {
-                                popUpTo(Screen.Login.route) { inclusive = true }
+                                Log.e(TAG,"Login username $username")
+
+                                if (token != null && name != null && email != null && username != null) {
+                                    //viewModel.saveLoginSession(token, name, email, username)
+                                    Log.e(TAG,"Login name $name")
+                                    navController.navigate(Screen.Chat.route) {
+                                        popUpTo(Screen.Login.route) { inclusive = true }
+                                    }
+                                }
+                            } else {
+                                showDialog.value = true
                             }
                         }
-                    } else {
-                        showDialog.value = true
+                        loginClicked = false
                     }
                 }
             },
@@ -239,6 +249,16 @@ fun Login(
         }
     }
 }
+
+fun <T> LiveData<T>.observeOnce(observer: Observer<T>) {
+    observeForever(object : Observer<T> {
+        override fun onChanged(t: T) {
+            observer.onChanged(t)
+            removeObserver(this)
+        }
+    })
+}
+
 
 //@Preview(showBackground = true)
 //@Composable
