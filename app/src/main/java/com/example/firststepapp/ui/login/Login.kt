@@ -39,12 +39,14 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.navigation.NavHostController
 import com.example.firststepapp.R
 import com.example.firststepapp.navigation.Screen
+import com.example.firststepapp.preferences.UserPreferences.Companion.preferenceDefaultValue
 import com.example.firststepapp.viewmodel.AuthViewModel
 
 @Composable
@@ -53,7 +55,6 @@ fun Login(
     onBackPressed: () -> Unit,
     viewModel: AuthViewModel
 ) {
-    val lifecycleOwner = LocalLifecycleOwner.current
     val backDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
 
     DisposableEffect(backDispatcher) {
@@ -155,40 +156,25 @@ fun Login(
             },
         )
 
-        var loginClicked by remember { mutableStateOf(false) }
         val showDialog = remember { mutableStateOf(false) }
 
         Button(
             onClick = {
-                if (!loginClicked) {
-                    loginClicked = true
-                    viewModel.login(context, email, password)
+                val email = email
+                val password = password
 
-                    viewModel._loginResponse.removeObservers(lifecycleOwner)
+                viewModel.login(context, email, password)
 
-                    viewModel._loginResponse.observeOnce(lifecycleOwner) { loginResponse ->
-                        loginResponse.let { response ->
-                            if (response.error != true) {
-                                val token = response.loginResult?.token
-                                val name = response.loginResult?.name
-                                val email = response.loginResult?.email
-                                val username = response.loginResult?.username
-
-                                Log.e(TAG,"Login username $username")
-
-                                if (token != null && name != null && email != null && username != null) {
-                                    //viewModel.saveLoginSession(token, name, email, username)
-                                    Log.e(TAG,"Login name $name")
-                                    navController.navigate(Screen.Home.route) {
-                                        launchSingleTop = true
-                                        popUpTo(Screen.Login.route) { inclusive = true }
-                                    }
-                                }
-                            } else {
-                                showDialog.value = true
+                viewModel.getUserPreferences("Token").observe(context as LifecycleOwner) { token ->
+                    Log.e("AutentikasiActivity", "Token berubah : $token")
+                    if (token != preferenceDefaultValue) {
+                        Log.e("AutentikasiActivity : ", "Menuju ke MainActivity")
+                        if (viewModel.login(context, email, password) != null) {
+                            navController.navigate(Screen.Home.route) {
+                                launchSingleTop = true
+                                popUpTo(Screen.Login.route) { inclusive = true }
                             }
                         }
-                        loginClicked = false
                     }
                 }
             },
@@ -251,15 +237,6 @@ fun Login(
             )
         }
     }
-}
-
-fun <T> LiveData<T>.observeOnce(lifecycleOwner: LifecycleOwner, observer: Observer<T>) {
-    observe(lifecycleOwner, object : Observer<T> {
-        override fun onChanged(value: T) {
-            observer.onChanged(value)
-            removeObserver(this)
-        }
-    })
 }
 
 //@Preview(showBackground = true)
