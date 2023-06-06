@@ -8,6 +8,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -32,11 +33,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.navigation.NavHostController
@@ -50,6 +53,7 @@ fun Login(
     onBackPressed: () -> Unit,
     viewModel: AuthViewModel
 ) {
+    val lifecycleOwner = LocalLifecycleOwner.current
     val backDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
 
     DisposableEffect(backDispatcher) {
@@ -91,7 +95,6 @@ fun Login(
         var password by remember { mutableStateOf("") }
 
         val context = LocalContext.current
-        val showDialog = remember { mutableStateOf(false) }
 
         // Email
         BasicTextField(
@@ -105,7 +108,7 @@ fun Login(
                     RoundedCornerShape(size = 10.dp)
                 ),
             decorationBox = { innerTextField ->
-                Row(
+                Box(
                     Modifier
                         .background(Color.Transparent)
                         .padding(10.dp)
@@ -135,7 +138,7 @@ fun Login(
                     RoundedCornerShape(size = 10.dp)
                 ),
             decorationBox = { innerTextField ->
-                Row(
+                Box(
                     Modifier
                         .background(Color.Transparent)
                         .padding(10.dp)
@@ -152,7 +155,8 @@ fun Login(
             },
         )
 
-        var loginClicked = false
+        var loginClicked by remember { mutableStateOf(false) }
+        val showDialog = remember { mutableStateOf(false) }
 
         Button(
             onClick = {
@@ -160,9 +164,11 @@ fun Login(
                     loginClicked = true
                     viewModel.login(context, email, password)
 
-                    viewModel._loginResponse.observeOnce { loginResponse ->
+                    viewModel._loginResponse.removeObservers(lifecycleOwner)
+
+                    viewModel._loginResponse.observeOnce(lifecycleOwner) { loginResponse ->
                         loginResponse.let { response ->
-                            if (!response.error!!) {
+                            if (response.error != true) {
                                 val token = response.loginResult?.token
                                 val name = response.loginResult?.name
                                 val email = response.loginResult?.email
@@ -247,15 +253,14 @@ fun Login(
     }
 }
 
-fun <T> LiveData<T>.observeOnce(observer: Observer<T>) {
-    observeForever(object : Observer<T> {
+fun <T> LiveData<T>.observeOnce(lifecycleOwner: LifecycleOwner, observer: Observer<T>) {
+    observe(lifecycleOwner, object : Observer<T> {
         override fun onChanged(value: T) {
             observer.onChanged(value)
             removeObserver(this)
         }
     })
 }
-
 
 //@Preview(showBackground = true)
 //@Composable
