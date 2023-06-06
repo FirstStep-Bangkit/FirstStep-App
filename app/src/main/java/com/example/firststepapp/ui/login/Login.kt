@@ -24,7 +24,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,15 +37,12 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import androidx.navigation.NavHostController
 import com.example.firststepapp.R
 import com.example.firststepapp.navigation.Screen
 import com.example.firststepapp.viewmodel.AuthViewModel
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.*
-import androidx.compose.runtime.rememberUpdatedState
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
 
 @Composable
 fun Login(
@@ -165,7 +161,7 @@ fun Login(
                     viewModel.login(context, email, password)
 
                     viewModel._loginResponse.observeOnce { loginResponse ->
-                        loginResponse?.let { response ->
+                        loginResponse.let { response ->
                             if (!response.error!!) {
                                 val token = response.loginResult?.token
                                 val name = response.loginResult?.name
@@ -178,6 +174,7 @@ fun Login(
                                     //viewModel.saveLoginSession(token, name, email, username)
                                     Log.e(TAG,"Login name $name")
                                     navController.navigate(Screen.Chat.route) {
+                                        launchSingleTop = true
                                         popUpTo(Screen.Login.route) { inclusive = true }
                                     }
                                 }
@@ -252,8 +249,8 @@ fun Login(
 
 fun <T> LiveData<T>.observeOnce(observer: Observer<T>) {
     observeForever(object : Observer<T> {
-        override fun onChanged(t: T) {
-            observer.onChanged(t)
+        override fun onChanged(value: T) {
+            observer.onChanged(value)
             removeObserver(this)
         }
     })
