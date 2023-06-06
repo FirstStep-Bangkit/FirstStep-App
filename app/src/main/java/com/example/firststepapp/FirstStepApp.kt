@@ -36,7 +36,10 @@ fun FirstStepApp() {
     CompositionLocalProvider(LocalAuthViewModel provides authViewModel) {
         NavHost(navController, startDestination = Screen.SplashScreen.route) {
             composable(Screen.SplashScreen.route) {
-                SplashScreen(navController)
+                SplashScreen(
+                    navController = navController,
+                    viewModel = authViewModel
+                )
             }
             composable(Screen.Login.route) {
                 Login(

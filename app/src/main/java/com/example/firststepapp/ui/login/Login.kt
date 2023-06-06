@@ -179,7 +179,7 @@ fun Login(
                                 if (token != null && name != null && email != null && username != null) {
                                     //viewModel.saveLoginSession(token, name, email, username)
                                     Log.e(TAG,"Login name $name")
-                                    navController.navigate(Screen.Chat.route) {
+                                    navController.navigate(Screen.Home.route) {
                                         launchSingleTop = true
                                         popUpTo(Screen.Login.route) { inclusive = true }
                                     }

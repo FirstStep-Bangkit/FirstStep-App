@@ -26,7 +26,14 @@ fun Home (
     navControl: NavHostController,
     viewModel: AuthViewModel
 ){
-
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            text = "Home"
+        )
+    }
 }
 
 @Composable
