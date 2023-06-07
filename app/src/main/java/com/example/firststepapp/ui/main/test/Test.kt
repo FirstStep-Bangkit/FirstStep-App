@@ -19,7 +19,7 @@ fun Test (
         contentAlignment = Alignment.Center,
     ) {
         Text(
-            text = "Chat"
+            text = "Test"
         )
     }
 }
