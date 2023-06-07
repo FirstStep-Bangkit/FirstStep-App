@@ -16,6 +16,9 @@ import com.example.firststepapp.preferences.dataStore
 import com.example.firststepapp.ui.login.Login
 import com.example.firststepapp.ui.main.chat.Chat
 import com.example.firststepapp.ui.main.home.Home
+import com.example.firststepapp.ui.main.personality.Personality
+import com.example.firststepapp.ui.main.profile.Profile
+import com.example.firststepapp.ui.main.test.Test
 import com.example.firststepapp.ui.register.Register
 import com.example.firststepapp.ui.splashscreen.SplashScreen
 import com.example.firststepapp.ui.theme.FirstStepAppTheme
@@ -62,6 +65,24 @@ fun FirstStepApp() {
                 Chat(
                     navControl = navController,
                     viewModel = authViewModel
+                )
+            }
+            composable(Screen.Test.route){
+                Test(
+                    navControl = navController,
+                    viewModel = authViewModel
+                )
+            }
+            composable(Screen.Personality.route){
+                Personality(
+                    navControl = navController,
+                    authViewModel = authViewModel
+                )
+            }
+            composable(Screen.Profile.route){
+                Profile(
+                    navControl = navController,
+                    authViewModel = authViewModel
                 )
             }
         }

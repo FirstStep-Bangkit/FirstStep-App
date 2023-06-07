@@ -11,16 +11,15 @@ import com.example.firststepapp.viewmodel.AuthViewModel
 
 @Composable
 fun Test (
-    modifier: Modifier,
-    navControl: NavHostController
-    //authViewModel: AuthViewModel
-){
+    navControl: NavHostController,
+    viewModel: AuthViewModel
+) {
     Box(
-        modifier = modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center,
     ) {
         Text(
-            text = "Test"
+            text = "Chat"
         )
     }
 }

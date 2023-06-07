@@ -11,12 +11,11 @@ import com.example.firststepapp.viewmodel.AuthViewModel
 
 @Composable
 fun Personality (
-    modifier: Modifier,
-    navControl: NavHostController
-    //authViewModel: AuthViewModel
+    navControl: NavHostController,
+    authViewModel: AuthViewModel
 ){
     Box(
-        modifier = modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center,
     ) {
         Text(
