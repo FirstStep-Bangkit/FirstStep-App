@@ -1,6 +1,7 @@
 package com.example.firststepapp.ui.main.home
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -22,6 +24,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -90,16 +93,22 @@ fun Headline(
         ) {
             Text(
                 text = "Halo, ${dashboardResult?.name}",
-                style = MaterialTheme.typography.headlineLarge,
+                style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier.weight(1f)
             )
             Spacer(modifier = Modifier.width(20.dp))
             val profilePicture = dashboardResult?.profilePicture ?: painterResource(R.drawable.onboarding_one)
-            Image(
-                modifier = Modifier.size(50.dp),
-                painter = profilePicture as Painter,
-                contentDescription = "Profile"
-            )
+            Box(
+                modifier = Modifier.size(50.dp)
+                    .clip(CircleShape)
+            ) {
+                Image(
+                    modifier = Modifier.fillMaxSize(),
+                    painter = profilePicture as Painter,
+                    contentDescription = "Profile"
+                )
+            }
+
         }
     }
 }
