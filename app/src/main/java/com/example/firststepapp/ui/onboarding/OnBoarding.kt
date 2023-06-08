@@ -124,11 +124,3 @@ fun ThirdOnBoardingScreenPreview() {
 fun OnBoardingScreenPreview() {
     OnBoarding()
 }
-
-//@Preview(showBackground = true)
-//@Composable
-//fun OnBoardingPreview(){
-//    FirstStepTheme {
-//        OnBoarding(R.drawable.onboarding_one,"Welcome to FirstStep!")
-//    }
-//}

@@ -10,19 +10,19 @@ sealed class PageOB(
 ) {
     object First : PageOB(
         image = R.drawable.onboarding_one,
-        title = "Meeting",
-        description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod."
+        title = "Welcome",
+        description = "Selamat datang diaplikasi FirstStep. Aplikasi untuk mengetahui kepribadian Kamu."
     )
 
     object Second : PageOB(
         image = R.drawable.onboarding_one,
-        title = "Coordination",
-        description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod."
+        title = "Know your personality ",
+        description = "Cari tahu kepribadian kamu disini dengan mengikuti beberapa tes. Dan lebih jauh mengenal diri kamu sendiri."
     )
 
     object Third : PageOB(
         image = R.drawable.onboarding_one,
-        title = "Dialogue",
-        description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod."
+        title = "Lets Started",
+        description = "Mulai Gaskeun."
     )
 }
