@@ -1,18 +1,29 @@
 package com.example.firststepapp.ui.onboarding
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -21,121 +32,122 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.firststepapp.R
+import com.example.firststepapp.ui.data.PageOB
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.HorizontalPagerIndicator
+import com.google.accompanist.pager.rememberPagerState
 
-data class OnboardingPage(val title: String, val description: String, val color: Color)
-
-val onboardingPages = listOf(
-    OnboardingPage(
-        title = "Welcome",
-        description = "Welcome to our app!",
-        color = Color.Blue
-    ),
-    OnboardingPage(
-        title = "Explore",
-        description = "Discover amazing features!",
-        color = Color.Green
-    ),
-    OnboardingPage(
-        title = "Connect",
-        description = "Connect with friends and family!",
-        color = Color.Yellow
+@Composable
+fun OnBoarding() {
+    val pages = listOf(
+        PageOB.First,
+        PageOB.Second,
+        PageOB.Third
     )
-)
+    val pagerState = rememberPagerState()
 
-@Composable
-fun App() {
-    SwipeOnboardingScreen(pages = onboardingPages)
-}
-
-@Composable
-fun SwipeOnboardingScreen(pages: List<OnboardingPage>) {
-    val currentPage = remember { mutableStateOf(0) }
-
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        LazyRow(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            itemsIndexed(pages) { index, page ->
-                SwipeOnboardingPage(page = page)
-            }
+    Column(modifier = Modifier.fillMaxSize()) {
+        HorizontalPager(
+            modifier = Modifier.weight(10f),
+            count = 3,
+            state = pagerState,
+            verticalAlignment = Alignment.Top
+        ) { position ->
+            PagerScreen(pageOb = pages[position])
         }
-
-        // Page Indicator
-        Box(
+        HorizontalPagerIndicator(
             modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 16.dp)
-        ) {
-            Row(
-                horizontalArrangement = Arrangement.Center
-            ) {
-                pages.forEachIndexed { index, _ ->
-                    PageIndicator(selected = index == currentPage.value)
-                }
-            }
-        }
-
-        // Skip Button
-        if (currentPage.value != pages.size - 1) {
-            Button(
-                onClick = {
-                    //currentPage.value = pages.size - 1
-                },
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(16.dp)
-            ) {
-                Text(text = "Skip")
-            }
-        }
+                .align(Alignment.CenterHorizontally)
+                .weight(1f),
+            pagerState = pagerState
+        )
+//        FinishButton(
+//            modifier = Modifier.weight(1f),
+//            pagerState = pagerState
+//        ) {
+//            welcomeViewModel.saveOnBoardingState(completed = true)
+//            navController.popBackStack()
+//            navController.navigate(Screen.Home.route)
+//        }
     }
 }
 
 @Composable
-fun SwipeOnboardingPage(page: OnboardingPage) {
-    Box(
+fun PagerScreen(pageOb: PageOB) {
+    Column(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        contentAlignment = Alignment.Center
+            .fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Top
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = page.title,
-                style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
-            Text(
-                text = page.description,
-                style = MaterialTheme.typography.bodyMedium,
-                color = Color.Gray,
-                modifier = Modifier.padding(horizontal = 32.dp)
-            )
-        }
+        Image(
+            modifier = Modifier
+                .fillMaxWidth(0.5f)
+                .fillMaxHeight(0.7f),
+            painter = painterResource(id = pageOb.image),
+            contentDescription = "Pager Image"
+        )
+        Text(
+            modifier = Modifier
+                .fillMaxWidth(),
+            text = pageOb.title,
+            fontSize = MaterialTheme.typography.titleLarge.fontSize,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center
+        )
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 40.dp)
+                .padding(top = 20.dp),
+            text = pageOb.description,
+            fontSize = MaterialTheme.typography.labelMedium.fontSize,
+            fontWeight = FontWeight.Medium,
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
+
+
+@Composable
+@Preview(showBackground = true)
+fun FirstOnBoardingScreenPreview() {
+    Column(modifier = Modifier.fillMaxSize()) {
+        PagerScreen(pageOb = PageOB.First)
     }
 }
 
 @Composable
-fun PageIndicator(selected: Boolean) {
-    Box(
-        modifier = Modifier
-            .size(10.dp)
-            .padding(4.dp)
-            .clip(CircleShape)
-            .background(if (selected) Color.White else Color.Gray)
-    )
+@Preview(showBackground = true)
+fun SecondOnBoardingScreenPreview() {
+    Column(modifier = Modifier.fillMaxSize()) {
+        PagerScreen(pageOb = PageOB.Second)
+    }
 }
 
-@Preview(showBackground = true)
 @Composable
-fun PreviewApp() {
-    App()
+@Preview(showBackground = true)
+fun ThirdOnBoardingScreenPreview() {
+    Column(modifier = Modifier.fillMaxSize()) {
+        PagerScreen(pageOb = PageOB.Third)
+    }
+}
+
+@Composable
+@Preview(showBackground = true)
+fun OnBoardingScreenPreview() {
+    OnBoarding()
 }
 
 //@Preview(showBackground = true)
