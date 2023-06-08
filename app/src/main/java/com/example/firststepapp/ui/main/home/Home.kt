@@ -17,47 +17,70 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.firststepapp.R
+import com.example.firststepapp.api.response.DashboardResult
+import com.example.firststepapp.preferences.UserPreferences
+import com.example.firststepapp.preferences.dataStore
 import com.example.firststepapp.ui.component.ClickableIconWithText
 import com.example.firststepapp.ui.component.IconHome
 import com.example.firststepapp.ui.theme.FirstStepAppTheme
 import com.example.firststepapp.viewmodel.AuthViewModel
+import com.example.firststepapp.viewmodel.MainViewModel
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid as LazyVerticalGrid
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Home (
     navControl: NavHostController,
-    viewModel: AuthViewModel
-){
+    viewModel: MainViewModel,
+    token: String
+) {
     Scaffold(
 
     ) { innerPadding ->
+
+        val dashboardResponse by viewModel._dashboardResponse.observeAsState()
+
         Column(
             modifier = Modifier
                 .padding(innerPadding)
                 .padding(20.dp)
                 .fillMaxSize()
         ) {
-            Headline()
+            Headline(dashboardResponse?.dashboardResult)
             IconGrid(navController = navControl)
         }
+    }
+
+    LaunchedEffectComponent(viewModel, token)
+}
+
+@Composable
+fun LaunchedEffectComponent(viewModel: MainViewModel, token: String) {
+    val context = LocalContext.current
+    LaunchedEffect(Unit) {
+        viewModel.dashboard(context,token)
     }
 }
 
 @Composable
 fun Headline(
-    modifier: Modifier = Modifier
+    dashboardResult: DashboardResult?
 ){
     Column(
-        modifier = modifier
+        modifier = Modifier
             .padding(10.dp)
             .fillMaxWidth()
     ) {
@@ -66,14 +89,15 @@ fun Headline(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                text = "Halo, Aris",
+                text = "Halo, ${dashboardResult?.name}",
                 style = MaterialTheme.typography.headlineLarge,
                 modifier = Modifier.weight(1f)
             )
             Spacer(modifier = Modifier.width(20.dp))
+            val profilePicture = dashboardResult?.profilePicture ?: painterResource(R.drawable.onboarding_one)
             Image(
                 modifier = Modifier.size(50.dp),
-                painter = painterResource(R.drawable.onboarding_one),
+                painter = profilePicture as Painter,
                 contentDescription = "Profile"
             )
         }
@@ -104,10 +128,10 @@ fun IconGrid(navController: NavHostController) {
 @Composable
 fun HomePreview(){
     FirstStepAppTheme {
-        val navController = rememberNavController()
+        //val navController = rememberNavController()
         //val viewModel = AuthViewModel
-        //Home(navController)
+        //Home(navController,viewModel)
         //Headline()
-        IconGrid(navController = navController)
+        //IconGrid(navController = navController)
     }
 }
