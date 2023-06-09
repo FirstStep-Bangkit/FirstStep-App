@@ -42,6 +42,7 @@ import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
 import com.example.firststepapp.R
 import com.example.firststepapp.api.response.ProfileResult
+import com.example.firststepapp.navigation.Screen
 import com.example.firststepapp.ui.theme.FirstStepAppTheme
 import com.example.firststepapp.viewmodel.AuthViewModel
 import com.example.firststepapp.viewmodel.MainViewModel
@@ -51,6 +52,7 @@ import com.example.firststepapp.viewmodel.MainViewModel
 fun Profile(
     navControl: NavHostController,
     viewModel: MainViewModel,
+    authViewModel: AuthViewModel,
     token: String
 ) {
     Scaffold { innerPadding ->
@@ -63,13 +65,17 @@ fun Profile(
                 .padding(innerPadding)
         ) {
             Header()
-            //profileResponse?.profileResult?.let { Identity(it) }
-            //profileResponse?.profileResult?.let { Status(it) }
             Identity(profileResponse?.profileResult)
             Status(profileResponse?.profileResult)
             Setting()
             LogoutButton(
-                onClick = { /* Logika logout */ }
+                onClick = {
+                    authViewModel.clearUserPreferences()
+                    navControl.navigate(Screen.Login.route) {
+                        launchSingleTop = true
+                        popUpTo(Screen.Profile.route) { inclusive = true }
+                    }
+                }
             )
         }
     }

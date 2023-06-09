@@ -98,6 +98,7 @@ fun FirstStepApp() {
                 Profile(
                     navControl = navController,
                     viewModel = mainViewModel,
+                    authViewModel = authViewModel,
                     token = token
                 )
             }
