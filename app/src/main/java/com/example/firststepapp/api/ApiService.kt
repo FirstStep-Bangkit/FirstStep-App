@@ -2,6 +2,7 @@ package com.example.firststepapp.api
 
 import com.example.firststepapp.api.response.DashboardResponse
 import com.example.firststepapp.api.response.LoginResponse
+import com.example.firststepapp.api.response.ProfileResponse
 import com.example.firststepapp.api.response.RegisterResponse
 import retrofit2.Call
 import retrofit2.http.Field
@@ -31,4 +32,9 @@ interface ApiService {
     fun dashboard(
         @Header("Authorization") authorization: String
     ): Call<DashboardResponse>
+
+    @GET("profile")
+    fun profile(
+        @Header("Authorization") authorization: String
+    ): Call<ProfileResponse>
 }

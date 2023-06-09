@@ -97,7 +97,8 @@ fun FirstStepApp() {
             composable(Screen.Profile.route){
                 Profile(
                     navControl = navController,
-                    authViewModel = authViewModel
+                    viewModel = mainViewModel,
+                    token = token
                 )
             }
         }
