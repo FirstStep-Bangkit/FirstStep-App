@@ -1,5 +1,6 @@
 package com.example.firststepapp.api
 
+import com.example.firststepapp.api.response.ChangePasswordResponse
 import com.example.firststepapp.api.response.DashboardResponse
 import com.example.firststepapp.api.response.LoginResponse
 import com.example.firststepapp.api.response.ProfileResponse
@@ -37,4 +38,12 @@ interface ApiService {
     fun profile(
         @Header("Authorization") authorization: String
     ): Call<ProfileResponse>
+
+    @POST("changepassword")
+    @FormUrlEncoded
+    fun changePassword(
+        @Header("Authorization") authorization: String,
+        @Field("currentPassword") currentPassword: String,
+        @Field("newPassword") newPassword: String
+    ): Call<ChangePasswordResponse>
 }
