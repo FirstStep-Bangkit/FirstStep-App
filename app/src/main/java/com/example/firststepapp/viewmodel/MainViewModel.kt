@@ -9,6 +9,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.firststepapp.api.ApiConfig
+import com.example.firststepapp.api.response.ChangePasswordResponse
 import com.example.firststepapp.api.response.DashboardResponse
 import com.example.firststepapp.api.response.ProfileResponse
 import com.example.firststepapp.preferences.UserPreferences
@@ -20,6 +21,9 @@ class MainViewModel(private val userPreferences: UserPreferences) : ViewModel() 
 
     val profileResponse = MutableLiveData<ProfileResponse>()
     val _profileResponse: LiveData<ProfileResponse> = profileResponse
+
+    val changePasswordResponse = MutableLiveData<ChangePasswordResponse>()
+    val _changePasswordResponse: LiveData<ChangePasswordResponse> = changePasswordResponse
 
     companion object {
         private const val TAG = "MainViewModel"
@@ -62,6 +66,28 @@ class MainViewModel(private val userPreferences: UserPreferences) : ViewModel() 
             }
 
             override fun onFailure(call: Call<ProfileResponse>, t: Throwable) {
+                Log.e(TAG, "onFailure: ${t.message}")
+            }
+
+        })
+    }
+
+    fun changePassword(context: Context,oldPassword: String, newPassword: String, token: String){
+        val client = ApiConfig.getApiService(context).changePassword(token,oldPassword,newPassword)
+        client.enqueue(object : Callback<ChangePasswordResponse>{
+            override fun onResponse(
+                call: Call<ChangePasswordResponse>,
+                response: Response<ChangePasswordResponse>
+            ) {
+                val responseBody = response.body()
+                if (response.isSuccessful && responseBody != null){
+                    changePasswordResponse.value = response.body()
+                } else {
+                    Log.e(TAG, "onFailure: ${response.code()}")
+                }
+            }
+
+            override fun onFailure(call: Call<ChangePasswordResponse>, t: Throwable) {
                 Log.e(TAG, "onFailure: ${t.message}")
             }
 
