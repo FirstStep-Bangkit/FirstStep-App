@@ -181,7 +181,6 @@ fun Register(
             value = password,
             onValueChange = {
                 password = it
-                //passwordMatch = password != confirmPassword
             },
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier

@@ -151,7 +151,7 @@ fun Login(
             },
         )
 
-        val showDialog = remember { mutableStateOf(false) }
+        //val showDialog = remember { mutableStateOf(false) }
 
         Button(
             onClick = {
@@ -189,24 +189,24 @@ fun Login(
             )
         }
 
-        if (showDialog.value) {
-            AlertDialog(
-                onDismissRequest = { showDialog.value = false },
-                title = {
-                    Text(text = "Kesalahan")
-                },
-                text = {
-                    Text(text = "Login gagal, silahkan coba lagi !!!")
-                },
-                confirmButton = {
-                    Button(
-                        onClick = { showDialog.value = false },
-                    ) {
-                        Text(text = "Tutup")
-                    }
-                }
-            )
-        }
+        //if (showDialog.value) {
+        //    AlertDialog(
+        //        onDismissRequest = { showDialog.value = false },
+        //        title = {
+        //            Text(text = "Kesalahan")
+        //        },
+        //        text = {
+        //            Text(text = "Login gagal, silahkan coba lagi !!!")
+        //        },
+        //        confirmButton = {
+        //            Button(
+        //                onClick = { showDialog.value = false },
+        //            ) {
+        //                Text(text = "Tutup")
+        //            }
+        //        }
+        //    )
+        //}
 
         // Konfirmasi punya akun atau belum
         Row(

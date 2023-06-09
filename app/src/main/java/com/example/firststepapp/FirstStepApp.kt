@@ -20,6 +20,7 @@ import com.example.firststepapp.ui.login.Login
 import com.example.firststepapp.ui.main.chat.Chat
 import com.example.firststepapp.ui.main.home.Home
 import com.example.firststepapp.ui.main.personality.Personality
+import com.example.firststepapp.ui.main.profile.ChangePassword
 import com.example.firststepapp.ui.main.profile.Profile
 import com.example.firststepapp.ui.main.test.Test
 import com.example.firststepapp.ui.register.Register
@@ -99,6 +100,13 @@ fun FirstStepApp() {
                     navControl = navController,
                     viewModel = mainViewModel,
                     authViewModel = authViewModel,
+                    token = token
+                )
+            }
+            composable(Screen.ChangePassword.route){
+                ChangePassword(
+                    navControl = navController,
+                    viewModel = mainViewModel,
                     token = token
                 )
             }
