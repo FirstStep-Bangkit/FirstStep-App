@@ -1,4 +1,4 @@
-package com.example.firststepapp.ui.main.profile
+package com.example.firststepapp.ui.main.profile.changepassword
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -27,7 +28,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.firststepapp.navigation.Screen
+import com.example.firststepapp.ui.register.RegisterStatus
 import com.example.firststepapp.viewmodel.MainViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun ChangePassword(
@@ -55,7 +62,12 @@ fun ChangePassword(
         var newPassword by remember { mutableStateOf("") }
         var confirmPassword by remember { mutableStateOf("") }
         var passwordMatch by remember { mutableStateOf(false) }
+
         val context = LocalContext.current
+
+        var changePasswordStatus by remember { mutableStateOf(ChangePasswordStatus.NONE) }
+        var changePasswordMessage by remember { mutableStateOf("") }
+        var showChangePasswordStatus by remember { mutableStateOf(false) }
 
         //Old Password
         BasicTextField(
@@ -169,9 +181,54 @@ fun ChangePassword(
             }
         }
 
+        if (changePasswordStatus != ChangePasswordStatus.NONE) {
+            AlertDialog(
+                onDismissRequest = {
+                    changePasswordStatus = ChangePasswordStatus.NONE
+                },
+                title = {
+                    Text(text = if (changePasswordStatus == ChangePasswordStatus.SUCCESS) "Sukses" else "Gagal")
+                },
+                text = {
+                    Text(text = changePasswordMessage)
+                },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            changePasswordStatus = ChangePasswordStatus.NONE
+                        }
+                    ) {
+                        Text("OK")
+                    }
+                }
+            )
+        }
+
         Button(
             onClick = {
+                viewModel.changePassword(context, oldPassword, newPassword, token) { success ->
+                    if (success) {
+                        changePasswordStatus = ChangePasswordStatus.SUCCESS
+                        changePasswordMessage = "Register berhasil"
+                        showChangePasswordStatus = true
 
+                        CoroutineScope(Dispatchers.Main).launch {
+                            delay(5000L)
+                            changePasswordStatus = ChangePasswordStatus.NONE
+                            showChangePasswordStatus = false
+                        }
+
+                        navControl.navigate(Screen.Profile.route) {
+                            launchSingleTop = true
+                            popUpTo(Screen.ChangePassword.route) { inclusive = true }
+                        }
+
+                    } else {
+                        changePasswordStatus = ChangePasswordStatus.FAILURE
+                        changePasswordMessage = "Register gagal"
+                        showChangePasswordStatus = true
+                    }
+                }
             },
             modifier = Modifier
                 .padding(top = 40.dp)

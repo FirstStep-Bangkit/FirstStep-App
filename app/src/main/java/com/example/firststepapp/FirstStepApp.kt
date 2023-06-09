@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
@@ -20,7 +19,7 @@ import com.example.firststepapp.ui.login.Login
 import com.example.firststepapp.ui.main.chat.Chat
 import com.example.firststepapp.ui.main.home.Home
 import com.example.firststepapp.ui.main.personality.Personality
-import com.example.firststepapp.ui.main.profile.ChangePassword
+import com.example.firststepapp.ui.main.profile.changepassword.ChangePassword
 import com.example.firststepapp.ui.main.profile.Profile
 import com.example.firststepapp.ui.main.test.Test
 import com.example.firststepapp.ui.register.Register

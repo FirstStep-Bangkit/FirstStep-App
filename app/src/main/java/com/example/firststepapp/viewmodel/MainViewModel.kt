@@ -72,7 +72,7 @@ class MainViewModel(private val userPreferences: UserPreferences) : ViewModel() 
         })
     }
 
-    fun changePassword(context: Context,oldPassword: String, newPassword: String, token: String){
+    fun changePassword(context: Context,oldPassword: String, newPassword: String, token: String, callback: (Boolean) -> Unit){
         val client = ApiConfig.getApiService(context).changePassword(token,oldPassword,newPassword)
         client.enqueue(object : Callback<ChangePasswordResponse>{
             override fun onResponse(
@@ -82,13 +82,16 @@ class MainViewModel(private val userPreferences: UserPreferences) : ViewModel() 
                 val responseBody = response.body()
                 if (response.isSuccessful && responseBody != null){
                     changePasswordResponse.value = response.body()
+                    callback(true)
                 } else {
                     Log.e(TAG, "onFailure: ${response.code()}")
+                    callback(false)
                 }
             }
 
             override fun onFailure(call: Call<ChangePasswordResponse>, t: Throwable) {
                 Log.e(TAG, "onFailure: ${t.message}")
+                callback(false)
             }
 
         })
