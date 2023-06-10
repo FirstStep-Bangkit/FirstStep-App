@@ -80,6 +80,8 @@ class AuthViewModel (private val preference : UserPreferences) : ViewModel() {
                         if (token != null && name != null && email != null && username != null) {
                             preference.saveLoginSession(token, name, email, username)
                             Log.d("AutentikasiViewModel", "Saving token=$token, email=$email, name=$name, username=$username")
+                        } else{
+                            Log.d("AutentikasiViewModel", "ada yang kosong")
                         }
                     }
                 } else {
