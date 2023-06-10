@@ -37,7 +37,7 @@ class UserPreferences private constructor(private val dataStore: DataStore<Prefe
     fun getName(): Flow<String> = dataStore.data.map { it[name] ?: preferenceDefaultValue }
     fun getUsername() : Flow<String> = dataStore.data.map { it[username] ?: preferenceDefaultValue }
 
-    suspend fun saveLoginSession(token: String, email: String, name:String, username: String) {
+    suspend fun saveLoginSession(token: String, email: String, name: String, username: String) {
         dataStore.edit { preferences ->
             preferences[this.token] = token
             preferences[this.email] = email
