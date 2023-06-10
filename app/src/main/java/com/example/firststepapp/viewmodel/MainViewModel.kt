@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModel
 import com.example.firststepapp.api.ApiConfig
 import com.example.firststepapp.api.response.ChangePasswordResponse
 import com.example.firststepapp.api.response.DashboardResponse
+import com.example.firststepapp.api.response.DeleteUserResponse
 import com.example.firststepapp.api.response.ProfileResponse
 import com.example.firststepapp.preferences.UserPreferences
 
@@ -24,6 +25,9 @@ class MainViewModel(private val userPreferences: UserPreferences) : ViewModel() 
 
     val changePasswordResponse = MutableLiveData<ChangePasswordResponse>()
     val _changePasswordResponse: LiveData<ChangePasswordResponse> = changePasswordResponse
+
+    val deleteUserResponse = MutableLiveData<DeleteUserResponse>()
+    val _deleteUserResponse: LiveData<DeleteUserResponse> = deleteUserResponse
 
     companion object {
         private const val TAG = "MainViewModel"
@@ -92,6 +96,28 @@ class MainViewModel(private val userPreferences: UserPreferences) : ViewModel() 
             override fun onFailure(call: Call<ChangePasswordResponse>, t: Throwable) {
                 Log.e(TAG, "onFailure: ${t.message}")
                 callback(false)
+            }
+
+        })
+    }
+
+    fun deleteUser(context: Context,token: String,username: String){
+        val client = ApiConfig.getApiService(context).deleteUser(token,username)
+        client.enqueue(object : Callback<DeleteUserResponse>{
+            override fun onResponse(
+                call: Call<DeleteUserResponse>,
+                response: Response<DeleteUserResponse>
+            ) {
+                val responseBody = response.body()
+                if (response.isSuccessful && responseBody != null){
+                    deleteUserResponse.value = response.body()
+                } else {
+                    Log.e(TAG, "onFailure: ${response.code()}")
+                }
+            }
+
+            override fun onFailure(call: Call<DeleteUserResponse>, t: Throwable) {
+                Log.e(TAG, "onFailure: ${t.message}")
             }
 
         })

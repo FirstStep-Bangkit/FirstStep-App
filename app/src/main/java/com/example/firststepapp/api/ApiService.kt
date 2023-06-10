@@ -2,15 +2,18 @@ package com.example.firststepapp.api
 
 import com.example.firststepapp.api.response.ChangePasswordResponse
 import com.example.firststepapp.api.response.DashboardResponse
+import com.example.firststepapp.api.response.DeleteUserResponse
 import com.example.firststepapp.api.response.LoginResponse
 import com.example.firststepapp.api.response.ProfileResponse
 import com.example.firststepapp.api.response.RegisterResponse
 import retrofit2.Call
+import retrofit2.http.DELETE
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
+import retrofit2.http.Path
 
 interface ApiService {
     @POST("register")
@@ -46,4 +49,11 @@ interface ApiService {
         @Field("currentPassword") currentPassword: String,
         @Field("newPassword") newPassword: String
     ): Call<ChangePasswordResponse>
+
+    @DELETE("deleteuser/{username}")
+    fun deleteUser(
+        @Header("Authorization") authorization: String,
+        @Path("username") username: String
+    ): Call<DeleteUserResponse>
+
 }
