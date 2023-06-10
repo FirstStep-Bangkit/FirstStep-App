@@ -17,13 +17,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import com.example.firststepapp.navigation.Screen
 import com.example.firststepapp.ui.data.PageOB
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.HorizontalPagerIndicator
 import com.google.accompanist.pager.rememberPagerState
 
 @Composable
-fun OnBoarding() {
+fun OnBoarding(
+    navControl: NavHostController,
+) {
+
     val pages = listOf(
         PageOB.First,
         PageOB.Second,
@@ -50,9 +55,9 @@ fun OnBoarding() {
 //            modifier = Modifier.weight(1f),
 //            pagerState = pagerState
 //        ) {
-//            welcomeViewModel.saveOnBoardingState(completed = true)
-//            navController.popBackStack()
-//            navController.navigate(Screen.Home.route)
+////            welcomeViewModel.saveOnBoardingState(completed = true)
+//            navControl.popBackStack()
+//            navControl.navigate(Screen.Login.route)
 //        }
     }
 }
@@ -122,5 +127,5 @@ fun ThirdOnBoardingScreenPreview() {
 @Composable
 @Preview(showBackground = true)
 fun OnBoardingScreenPreview() {
-    OnBoarding()
+//    OnBoarding()
 }
