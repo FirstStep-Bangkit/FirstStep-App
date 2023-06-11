@@ -1,7 +1,7 @@
 package com.example.firststepapp.ui.main.profile
 
+import android.util.Log
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,6 +17,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -29,6 +30,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,7 +42,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.firststepapp.R
 import com.example.firststepapp.api.response.ProfileResult
@@ -68,7 +71,7 @@ fun Profile(
             Header()
             Identity(profileResponse?.profileResult)
             Status(profileResponse?.profileResult)
-            Setting(navControl)
+            Setting(navControl, authViewModel, viewModel)
             LogoutButton(
                 onClick = {
                     authViewModel.clearUserPreferences()
@@ -214,8 +217,13 @@ fun Status(
 
 @Composable
 fun Setting(
-    navControl: NavHostController
-){
+    navControl: NavHostController,
+    authViewModel: AuthViewModel = viewModel(),
+    mainViewModel: MainViewModel = viewModel()
+) {
+
+    val context = LocalContext.current
+
     Column(
         modifier = Modifier
             .padding(
@@ -239,7 +247,11 @@ fun Setting(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 10.dp)
-                .clickable { navControl.navigate(Screen.ChangePassword.route) }
+                .clickable {
+                    navControl.navigate(
+                        Screen.ChangePassword.route
+                    )
+                }
         ) {
             Row(
                 modifier = Modifier
@@ -262,6 +274,9 @@ fun Setting(
                 )
             }
         }
+
+        val showDialog = remember { mutableStateOf(false) }
+
         Card(
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.inverseOnSurface
@@ -269,6 +284,9 @@ fun Setting(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 5.dp)
+                .clickable {
+                    showDialog.value = true
+                }
         ) {
             Row(
                 modifier = Modifier
@@ -291,6 +309,83 @@ fun Setting(
                 )
             }
         }
+
+        confirmDialog(
+            showDialog = showDialog.value,
+            onConfirm = {
+                // Lakukan tindakan hapus akun di sini
+                val token = authViewModel.getUserPreferences("token").value
+                val username = authViewModel.getUserPreferences("username").value
+
+                if (token != null && username != null) {
+                    mainViewModel.deleteUser(context,token,username)
+                    authViewModel.clearUserPreferences()
+                    navControl.navigate(Screen.Login.route) {
+                        launchSingleTop = true
+                        popUpTo(Screen.Profile.route) { inclusive = true }
+                    }
+                } else {
+                        Log.e("Username & password", "Tidak ditemukan")
+                }
+                showDialog.value = false
+            },
+            onCancel = {
+                showDialog.value = false
+            }
+        )
+    }
+}
+
+@Composable
+fun confirmDialog(
+    showDialog: Boolean,
+    onConfirm: () -> Unit,
+    onCancel: () -> Unit
+) {
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = onCancel,
+            title = { Text(text = "Konfirmasi Hapus Akun") },
+            text = { Text(text = "Apakah Anda yakin ingin menghapus akun?") },
+            confirmButton = {
+                Button(
+                    onClick = {onConfirm()},
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                ) {
+                    Text(text = "OK")
+                }
+            },
+            dismissButton = {
+                Button(
+                    onClick = {onCancel()},
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Gray),
+                ) {
+                    Text(text = "Batal")
+                }
+            }
+        )
+    }
+}
+
+@Composable
+fun successDialog(
+    showDialog: Boolean,
+    onClose: () -> Unit
+) {
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = onClose,
+            title = { Text(text = "Hapus Akun Berhasil") },
+            text = { Text(text = "Akun Anda telah berhasil dihapus.") },
+            confirmButton = {
+                Button(
+                    onClick = onClose,
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                ) {
+                    Text(text = "Tutup")
+                }
+            }
+        )
     }
 }
 
@@ -318,5 +413,7 @@ fun ProfilePreview(){
     FirstStepAppTheme {
         //Status()
         //Setting()
+        //confirmDialog(showDialog = true, onConfirm = {}, onCancel = {})
+        //successDialog(showDialog = true, onClose = {})
     }
 }
