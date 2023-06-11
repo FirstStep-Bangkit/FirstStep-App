@@ -276,6 +276,7 @@ fun Setting(
         }
 
         val showDialog = remember { mutableStateOf(false) }
+        val showSuccessDialog = remember { mutableStateOf(false) }
 
         Card(
             colors = CardDefaults.cardColors(
@@ -313,24 +314,49 @@ fun Setting(
         confirmDialog(
             showDialog = showDialog.value,
             onConfirm = {
-                // Lakukan tindakan hapus akun di sini
+
                 val token = authViewModel.getUserPreferences("token").value
                 val username = authViewModel.getUserPreferences("username").value
 
+                //if (token != null && username != null) {
+                //    mainViewModel.deleteUser(context,token,username)
+                //    authViewModel.clearUserPreferences()
+                //    navControl.navigate(Screen.Login.route) {
+                //        launchSingleTop = true
+                //        popUpTo(Screen.Profile.route) { inclusive = true }
+                //    }
+                //} else {
+                //        Log.e("Username & password", "Tidak ditemukan")
+                //}
+
                 if (token != null && username != null) {
-                    mainViewModel.deleteUser(context,token,username)
-                    authViewModel.clearUserPreferences()
-                    navControl.navigate(Screen.Login.route) {
-                        launchSingleTop = true
-                        popUpTo(Screen.Profile.route) { inclusive = true }
+                    mainViewModel.deleteUser(context, token, username) { success ->
+                        if (success) {
+                            showSuccessDialog.value = true
+                            authViewModel.clearUserPreferences()
+                            navControl.navigate(Screen.Login.route) {
+                                launchSingleTop = true
+                                popUpTo(Screen.Profile.route) { inclusive = true }
+                            }
+                        } else {
+                            Log.e("Delete User", "Gagal menghapus akun")
+                        }
                     }
                 } else {
-                        Log.e("Username & password", "Tidak ditemukan")
+                    Log.e("Username & password", "Tidak ditemukan")
                 }
+
                 showDialog.value = false
             },
             onCancel = {
                 showDialog.value = false
+            }
+        )
+
+        successDialog(
+            showDialog = showSuccessDialog.value,
+            onClose = {
+                showSuccessDialog.value = false
             }
         )
     }

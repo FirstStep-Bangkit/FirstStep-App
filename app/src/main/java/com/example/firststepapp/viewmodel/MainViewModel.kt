@@ -101,7 +101,7 @@ class MainViewModel(private val userPreferences: UserPreferences) : ViewModel() 
         })
     }
 
-    fun deleteUser(context: Context,token: String,username: String){
+    fun deleteUser(context: Context,token: String,username: String, callback: (Boolean) -> Unit){
         val client = ApiConfig.getApiService(context).deleteUser(token,username)
         client.enqueue(object : Callback<DeleteUserResponse>{
             override fun onResponse(
@@ -111,13 +111,16 @@ class MainViewModel(private val userPreferences: UserPreferences) : ViewModel() 
                 val responseBody = response.body()
                 if (response.isSuccessful && responseBody != null){
                     deleteUserResponse.value = response.body()
+                    callback(true)
                 } else {
                     Log.e(TAG, "onFailure: ${response.code()}")
+                    callback(false)
                 }
             }
 
             override fun onFailure(call: Call<DeleteUserResponse>, t: Throwable) {
                 Log.e(TAG, "onFailure: ${t.message}")
+                callback(false)
             }
 
         })
