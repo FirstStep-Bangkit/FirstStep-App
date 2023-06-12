@@ -13,6 +13,7 @@ import com.example.firststepapp.api.response.ChangePasswordResponse
 import com.example.firststepapp.api.response.DashboardResponse
 import com.example.firststepapp.api.response.DeleteUserResponse
 import com.example.firststepapp.api.response.ProfileResponse
+import com.example.firststepapp.api.response.QuizResponse
 import com.example.firststepapp.preferences.UserPreferences
 
 class MainViewModel(private val userPreferences: UserPreferences) : ViewModel() {
@@ -28,6 +29,9 @@ class MainViewModel(private val userPreferences: UserPreferences) : ViewModel() 
 
     val deleteUserResponse = MutableLiveData<DeleteUserResponse>()
     val _deleteUserResponse: LiveData<DeleteUserResponse> = deleteUserResponse
+
+    val quizResponse = MutableLiveData<QuizResponse>()
+    val _quizResponse: LiveData<QuizResponse> = quizResponse
 
     companion object {
         private const val TAG = "MainViewModel"
@@ -121,6 +125,28 @@ class MainViewModel(private val userPreferences: UserPreferences) : ViewModel() 
             override fun onFailure(call: Call<DeleteUserResponse>, t: Throwable) {
                 Log.e(TAG, "onFailure: ${t.message}")
                 callback(false)
+            }
+
+        })
+    }
+
+    fun getQuiz(context: Context,token: String){
+        val client = ApiConfig.getApiService(context).quiz(token)
+        client.enqueue(object : Callback<QuizResponse>{
+            override fun onResponse(
+                call: Call<QuizResponse>,
+                response: Response<QuizResponse>
+            ) {
+                val responseBody = response.body()
+                if (response.isSuccessful && responseBody != null) {
+                    quizResponse.value = response.body()
+                } else {
+                    Log.e(TAG, "onFailure: ${response.code()}")
+                }
+            }
+
+            override fun onFailure(call: Call<QuizResponse>, t: Throwable) {
+                Log.e(TAG, "onFailure: ${t.message}")
             }
 
         })

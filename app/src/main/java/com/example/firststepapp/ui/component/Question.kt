@@ -23,8 +23,9 @@ import com.example.firststepapp.ui.theme.FirstStepAppTheme
 
 @Composable
 fun Question(
-
-){
+    //questions: List<String?>
+    question: String
+) {
     Card(
         modifier = Modifier
             .padding(20.dp)
@@ -40,7 +41,7 @@ fun Question(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Ini soal",
+                text = question,
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier
                     .padding(bottom = 20.dp)
@@ -69,6 +70,6 @@ fun Question(
 @Composable
 fun QuestionPreview(){
     FirstStepAppTheme {
-        Question()
+        //Question()
     }
 }

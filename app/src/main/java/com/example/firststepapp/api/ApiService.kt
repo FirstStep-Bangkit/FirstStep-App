@@ -5,6 +5,7 @@ import com.example.firststepapp.api.response.DashboardResponse
 import com.example.firststepapp.api.response.DeleteUserResponse
 import com.example.firststepapp.api.response.LoginResponse
 import com.example.firststepapp.api.response.ProfileResponse
+import com.example.firststepapp.api.response.QuizResponse
 import com.example.firststepapp.api.response.RegisterResponse
 import retrofit2.Call
 import retrofit2.http.DELETE
@@ -56,4 +57,8 @@ interface ApiService {
         @Path("username") username: String
     ): Call<DeleteUserResponse>
 
+    @GET("questions")
+    fun quiz(
+        @Header("Authorization") authorization: String
+    ): Call<QuizResponse>
 }
