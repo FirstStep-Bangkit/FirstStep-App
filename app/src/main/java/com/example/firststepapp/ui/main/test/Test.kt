@@ -12,6 +12,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -28,13 +33,18 @@ import com.example.firststepapp.viewmodel.MainViewModel
 fun Test(
     navControl: NavHostController,
     viewModel: MainViewModel,
-    authViewModel: AuthViewModel,
     token: String
 ) {
     val context = LocalContext.current
 
-    viewModel.getQuiz(context,token)
-    val quizResponse = viewModel._quizResponse.value
+    //viewModel.getQuiz(context,token)
+    //val quizResponse = viewModel._quizResponse.value
+
+    val quizResponse by viewModel._quizResponse.observeAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.getQuiz(context, token)
+    }
 
     Scaffold { innerPadding ->
         Column(
@@ -43,10 +53,10 @@ fun Test(
                 .padding(innerPadding)
         ) {
             Header()
-            quizResponse?.let { response ->
-                LazyColumn {
+            LazyColumn {
+                quizResponse?.let { response ->
                     items(response.questions.orEmpty()) { question ->
-                        Question(question = question.orEmpty())
+                        question?.let { Question(question = it) }
                     }
                 }
             }
@@ -76,7 +86,7 @@ fun Header (){
         Text(
             modifier = Modifier
                 .padding(top = 5.dp),
-            text = "Kerjakan dengan sejujurnya, karena jawaban anda dapat mempengaruhi keakuratan hasil",
+            text = "Kerjakan dengan sejujurnya, karena jawaban anda dapat mempengaruhi keakuratan hasil. Jika soal tidak muncul, keluar dari halaman ini dan buka halaman ini kembali",
             style = MaterialTheme.typography.bodyMedium.copy(
                 fontStyle = FontStyle.Italic
             )

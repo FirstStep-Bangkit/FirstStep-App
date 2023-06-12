@@ -86,7 +86,6 @@ fun FirstStepApp() {
                 Test(
                     navControl = navController,
                     viewModel = mainViewModel,
-                    authViewModel = authViewModel,
                     token = token
                 )
             }
