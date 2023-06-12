@@ -27,6 +27,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -318,26 +319,11 @@ fun Setting(
                 val token = authViewModel.getUserPreferences("token").value
                 val username = authViewModel.getUserPreferences("username").value
 
-                //if (token != null && username != null) {
-                //    mainViewModel.deleteUser(context,token,username)
-                //    authViewModel.clearUserPreferences()
-                //    navControl.navigate(Screen.Login.route) {
-                //        launchSingleTop = true
-                //        popUpTo(Screen.Profile.route) { inclusive = true }
-                //    }
-                //} else {
-                //        Log.e("Username & password", "Tidak ditemukan")
-                //}
-
                 if (token != null && username != null) {
                     mainViewModel.deleteUser(context, token, username) { success ->
                         if (success) {
                             showSuccessDialog.value = true
                             authViewModel.clearUserPreferences()
-                            navControl.navigate(Screen.Login.route) {
-                                launchSingleTop = true
-                                popUpTo(Screen.Profile.route) { inclusive = true }
-                            }
                         } else {
                             Log.e("Delete User", "Gagal menghapus akun")
                         }
@@ -396,16 +382,27 @@ fun confirmDialog(
 @Composable
 fun successDialog(
     showDialog: Boolean,
-    onClose: () -> Unit
+    onClose: () -> Unit,
+    navController: NavHostController? = null
 ) {
     if (showDialog) {
+        DisposableEffect(Unit) {
+            onClose()
+            onDispose {}
+        }
         AlertDialog(
-            onDismissRequest = onClose,
+            onDismissRequest = {},
             title = { Text(text = "Hapus Akun Berhasil") },
             text = { Text(text = "Akun Anda telah berhasil dihapus.") },
             confirmButton = {
                 Button(
-                    onClick = onClose,
+                    onClick = {
+                        onClose()
+                        navController?.navigate(Screen.Login.route) {
+                            launchSingleTop = true
+                            popUpTo(Screen.Profile.route) { inclusive = true }
+                        }
+                    },
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                 ) {
                     Text(text = "Tutup")
