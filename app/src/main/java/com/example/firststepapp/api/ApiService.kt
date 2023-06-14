@@ -4,6 +4,7 @@ import com.example.firststepapp.api.response.ChangePasswordResponse
 import com.example.firststepapp.api.response.DashboardResponse
 import com.example.firststepapp.api.response.DeleteUserResponse
 import com.example.firststepapp.api.response.LoginResponse
+import com.example.firststepapp.api.response.PersonalityResponse
 import com.example.firststepapp.api.response.ProfileResponse
 import com.example.firststepapp.api.response.QuizResponse
 import com.example.firststepapp.api.response.RegisterResponse
@@ -61,4 +62,9 @@ interface ApiService {
     fun quiz(
         @Header("Authorization") authorization: String
     ): Call<QuizResponse>
+
+    @GET("personality")
+    fun personality(
+        @Header("Authorization9") authorization: String
+    ): Call<PersonalityResponse>
 }

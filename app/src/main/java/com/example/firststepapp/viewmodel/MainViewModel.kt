@@ -12,6 +12,7 @@ import com.example.firststepapp.api.ApiConfig
 import com.example.firststepapp.api.response.ChangePasswordResponse
 import com.example.firststepapp.api.response.DashboardResponse
 import com.example.firststepapp.api.response.DeleteUserResponse
+import com.example.firststepapp.api.response.PersonalityResponse
 import com.example.firststepapp.api.response.ProfileResponse
 import com.example.firststepapp.api.response.QuizResponse
 import com.example.firststepapp.preferences.UserPreferences
@@ -32,6 +33,9 @@ class MainViewModel(private val userPreferences: UserPreferences) : ViewModel() 
 
     val quizResponse = MutableLiveData<QuizResponse>()
     val _quizResponse: LiveData<QuizResponse> = quizResponse
+
+    val personalityResponse = MutableLiveData<PersonalityResponse>()
+    val _personalityResponse: LiveData<PersonalityResponse> = personalityResponse
 
     companion object {
         private const val TAG = "MainViewModel"
@@ -151,4 +155,26 @@ class MainViewModel(private val userPreferences: UserPreferences) : ViewModel() 
 
         })
     }
+
+    fun personality(context: Context,token: String) {
+        val client = ApiConfig.getApiService(context).personality(token)
+        client.enqueue(object : Callback<PersonalityResponse> {
+            override fun onResponse(
+                call: Call<PersonalityResponse>,
+                response: Response<PersonalityResponse>
+            ) {
+                val responseBody = response.body()
+                if (response.isSuccessful && responseBody != null) {
+                    personalityResponse.value = response.body()
+                } else {
+                    Log.e(TAG, "onFailure: ${response.code()}")
+                }
+            }
+
+            override fun onFailure(call: Call<PersonalityResponse>, t: Throwable) {
+                Log.e(TAG, "onFailure: ${t.message}")
+            }
+        })
+    }
+
 }
