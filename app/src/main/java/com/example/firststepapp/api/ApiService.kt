@@ -3,13 +3,16 @@ package com.example.firststepapp.api
 import com.example.firststepapp.api.response.AnswerResponse
 import com.example.firststepapp.api.response.ChangePasswordResponse
 import com.example.firststepapp.api.response.DashboardResponse
+import com.example.firststepapp.api.response.DeleteProfileResponse
 import com.example.firststepapp.api.response.DeleteUserResponse
 import com.example.firststepapp.api.response.LoginResponse
 import com.example.firststepapp.api.response.PersonalityResponse
 import com.example.firststepapp.api.response.ProfileResponse
 import com.example.firststepapp.api.response.QuizResponse
 import com.example.firststepapp.api.response.RegisterResponse
+import com.example.firststepapp.api.response.UploadPhotoProfileResponse
 import com.example.firststepapp.ui.data.PredictRequest
+import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -17,7 +20,9 @@ import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.Multipart
 import retrofit2.http.POST
+import retrofit2.http.Part
 import retrofit2.http.Path
 
 interface ApiService {
@@ -66,7 +71,6 @@ interface ApiService {
         @Header("Authorization") authorization: String
     ): Call<QuizResponse>
 
-
     @GET("personality")
     fun personality(
         @Header("Authorization9") authorization: String
@@ -77,5 +81,17 @@ interface ApiService {
         @Header("Authorization") authorization: String,
         @Body request: PredictRequest
     ): Call<AnswerResponse>
+
+    @Multipart
+    @POST("uploadphoto")
+    fun uploadPhoto(
+        @Part photo: MultipartBody.Part,
+        @Header("Authorization") token: String
+    ): Call<UploadPhotoProfileResponse>
+
+    @DELETE("deletephoto")
+    fun deleteProfile(
+        @Header("Authorization") authorization: String
+    ): Call<DeleteProfileResponse>
 
 }

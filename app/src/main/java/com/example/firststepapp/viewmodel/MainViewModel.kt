@@ -12,12 +12,18 @@ import com.example.firststepapp.api.ApiConfig
 import com.example.firststepapp.api.response.AnswerResponse
 import com.example.firststepapp.api.response.ChangePasswordResponse
 import com.example.firststepapp.api.response.DashboardResponse
+import com.example.firststepapp.api.response.DeleteProfileResponse
 import com.example.firststepapp.api.response.DeleteUserResponse
 import com.example.firststepapp.api.response.PersonalityResponse
 import com.example.firststepapp.api.response.ProfileResponse
 import com.example.firststepapp.api.response.QuizResponse
+import com.example.firststepapp.api.response.UploadPhotoProfileResponse
 import com.example.firststepapp.preferences.UserPreferences
 import com.example.firststepapp.ui.data.PredictRequest
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import java.io.File
 
 class MainViewModel(private val userPreferences: UserPreferences) : ViewModel() {
 
@@ -41,6 +47,12 @@ class MainViewModel(private val userPreferences: UserPreferences) : ViewModel() 
 
     private val answerResponse = MutableLiveData<AnswerResponse>()
     val _answerResponse: LiveData<AnswerResponse> = answerResponse
+
+    private val deleteProfileResponse = MutableLiveData<DeleteProfileResponse>()
+    val _deleteProfileResponse: LiveData<DeleteProfileResponse> = deleteProfileResponse
+
+    private val uploadPhotoProfileResponse = MutableLiveData<UploadPhotoProfileResponse>()
+    val _uploadPhotoProfileResponse: LiveData<UploadPhotoProfileResponse> = uploadPhotoProfileResponse
 
 
     companion object {
@@ -204,6 +216,55 @@ class MainViewModel(private val userPreferences: UserPreferences) : ViewModel() 
 
                 Log.e(TAG, "onFailure: ${t.message}")
             }
+        })
+    }
+
+    fun deleteProfile(context: Context, token: String){
+        val client = ApiConfig.getApiService(context).deleteProfile(token)
+        client.enqueue(object : Callback<DeleteProfileResponse> {
+            override fun onResponse(
+                call: Call<DeleteProfileResponse>,
+                response: Response<DeleteProfileResponse>
+            ) {
+                val responseBody = response.body()
+                if (response.isSuccessful && responseBody != null) {
+                    deleteProfileResponse.value = response.body()
+                } else {
+                    Log.e(TAG, "onFailure: ${response.code()}")
+                }
+            }
+
+            override fun onFailure(call: Call<DeleteProfileResponse>, t: Throwable) {
+                Log.e(TAG, "onFailure: ${t.message}")
+            }
+        })
+    }
+
+    fun uploadPhotoProfile(context: Context, token: String, photo: File){
+
+        val requestImageFile = photo.asRequestBody("image/jpeg".toMediaType())
+        val imageMultipart: MultipartBody.Part = MultipartBody.Part.createFormData(
+            "photo", photo.name, requestImageFile
+        )
+
+        val client = ApiConfig.getApiService(context).uploadPhoto(imageMultipart, token)
+        client.enqueue(object : Callback<UploadPhotoProfileResponse>{
+            override fun onResponse(
+                call: Call<UploadPhotoProfileResponse>,
+                response: Response<UploadPhotoProfileResponse>
+            ) {
+                val responseBody = response.body()
+                if (response.isSuccessful && responseBody != null) {
+                    uploadPhotoProfileResponse.value = response.body()
+                } else {
+                    Log.e(TAG, "onFailure: ${response.message()}")
+                }
+            }
+
+            override fun onFailure(call: Call<UploadPhotoProfileResponse>, t: Throwable) {
+                Log.e(TAG, "onFailure: ${t.message}")
+            }
+
         })
     }
 }
