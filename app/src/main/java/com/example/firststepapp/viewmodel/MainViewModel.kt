@@ -36,7 +36,6 @@ class MainViewModel(private val userPreferences: UserPreferences) : ViewModel() 
     val quizResponse = MutableLiveData<QuizResponse>()
     val _quizResponse: LiveData<QuizResponse> = quizResponse
 
-
     val personalityResponse = MutableLiveData<PersonalityResponse>()
     val _personalityResponse: LiveData<PersonalityResponse> = personalityResponse
 
@@ -163,7 +162,6 @@ class MainViewModel(private val userPreferences: UserPreferences) : ViewModel() 
         })
     }
 
-
     fun personality(context: Context,token: String) {
         val client = ApiConfig.getApiService(context).personality(token)
         client.enqueue(object : Callback<PersonalityResponse> {
@@ -201,9 +199,6 @@ class MainViewModel(private val userPreferences: UserPreferences) : ViewModel() 
                     Log.e(TAG, "onFailure: ${response.code()}")
                 }
             }
-
-
-
 
             override fun onFailure(call: Call<AnswerResponse>, t: Throwable) {
 

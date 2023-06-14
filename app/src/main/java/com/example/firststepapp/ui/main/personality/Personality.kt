@@ -1,7 +1,9 @@
 package com.example.firststepapp.ui.main.personality
 
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.compose.BackHandler
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -21,14 +23,19 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -37,31 +44,80 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
+import coil.compose.rememberImagePainter
 import com.example.firststepapp.R
+import com.example.firststepapp.api.response.PersonalityResponse
+import com.example.firststepapp.navigation.Screen
 import com.example.firststepapp.ui.theme.FirstStepAppTheme
 import com.example.firststepapp.viewmodel.AuthViewModel
+import com.example.firststepapp.viewmodel.MainViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Personality (
     navControl: NavHostController,
-    authViewModel: AuthViewModel
+    authViewModel: AuthViewModel,
+    viewModel: MainViewModel,
+    token: String
 ){
     Scaffold { innerPadding ->
+
+        val personalityResponse by viewModel._personalityResponse.observeAsState()
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
             Header()
-            Identity()
+            Identity(personalityResponse)
+            personalityResponse?.description?.let {
+                Content(
+                    header = "Deskripsi diri anda",
+                    description = it,
+                )
+            }
+            personalityResponse?.job?.let {
+                Content(
+                    header = "Pekerjaan yang cocok",
+                    description = it,
+                )
+            }
+        }
+    }
+    LaunchedEffectComponent(viewModel, token)
+
+    val backCallback = remember {
+        object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                navControl.popBackStack(route = Screen.Home.route, inclusive = false)
+            }
+        }
+    }
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val onBackPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
+
+    DisposableEffect(Unit) {
+        onBackPressedDispatcher?.addCallback(lifecycleOwner, backCallback)
+        onDispose {
+            backCallback.remove()
         }
     }
 }
 
 @Composable
-fun Header (){
+fun LaunchedEffectComponent(viewModel: MainViewModel, token: String) {
+    val context = LocalContext.current
+    LaunchedEffect(Unit) {
+        viewModel.personality(context,token)
+    }
+}
+
+@Composable
+fun Header (
+
+){
     Column(
         modifier = Modifier
             .padding(
@@ -72,7 +128,7 @@ fun Header (){
             )
             .fillMaxWidth()
     ) {
-        androidx.compose.material3.Text(
+        Text(
             text = "Your personality",
             style = MaterialTheme.typography.headlineMedium.copy(
                 fontWeight = FontWeight.Bold
@@ -83,8 +139,25 @@ fun Header (){
 
 @Composable
 fun Identity(
-
+    personalityResponse: PersonalityResponse?
 ) {
+    val mbti = personalityResponse?.mbti
+
+    val personalityPict = when (mbti) {
+        "ENTJ" -> R.drawable.entj
+        "ENTP" -> R.drawable.entp
+        "ESFP" -> R.drawable.esfp
+        "ESTJ" -> R.drawable.estj
+        "ESTP" -> R.drawable.estp
+        "INFJ" -> R.drawable.infj
+        "INTJ" -> R.drawable.intj
+        "INTP" -> R.drawable.intp
+        "ISFJ" -> R.drawable.isfj
+        "ISFP" -> R.drawable.isfp
+        "ISTP" -> R.drawable.istp
+        else -> R.drawable.onboarding_one
+    }
+
     Column(
         modifier = Modifier
             .padding(20.dp)
@@ -93,21 +166,23 @@ fun Identity(
 
         ) {
         Image(
-            painter = painterResource(R.drawable.onboarding_one),
+            painter = painterResource(personalityPict),
             contentDescription = "logo"
         )
-        Text(
-            modifier = Modifier
-                .padding(top = 20.dp),
-            text = "Type",
-            style = MaterialTheme.typography.headlineSmall.copy(
-                fontWeight = FontWeight.Bold
+        personalityResponse?.mbti?.let {
+            Text(
+                modifier = Modifier
+                    .padding(top = 20.dp),
+                text = it,
+                style = MaterialTheme.typography.headlineSmall.copy(
+                    fontWeight = FontWeight.Bold
+                )
             )
-        )
+        }
         Text(
             modifier = Modifier
                 .padding(top = 5.dp),
-            text = "(Singkatan)",
+            text = "(${personalityResponse?.acronym})",
             style = MaterialTheme.typography.bodyMedium.copy(
                 fontStyle = FontStyle.Italic
             )
@@ -120,12 +195,11 @@ fun Identity(
 fun Content(
     header: String,
     description: String,
-    color: Color, // color
 ) {
-    var expanded by remember { mutableStateOf(false) } // Expand State
+    var expanded by remember { mutableStateOf(false) }
     val rotationState by animateFloatAsState(
         targetValue = if (expanded) 180f else 0f,
-        label = "Rotation state of expand icon button",
+        label = "Rotasi icon",
     )
 
     Card(
@@ -142,14 +216,15 @@ fun Content(
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween // control the header alignment over here.
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
                     text = header,
-                    color = color, // header color
                     fontSize = 20.sp,
                     textAlign = TextAlign.Start,
-                    fontWeight = FontWeight.Normal,
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.Normal
+                    )
                 )
                 IconButton(
                     modifier = Modifier.rotate(rotationState),
@@ -157,18 +232,18 @@ fun Content(
                 ) {
                     Icon(
                         imageVector = Icons.Default.KeyboardArrowDown,
-                        tint = color, // Icon Color
-                        contentDescription = "Drop Down Arrow"
+                        contentDescription = "Drop Down icon"
                     )
                 }
             }
             if (expanded) {
                 Text(
                     text = description,
-                    color = color, // description color
                     fontSize = 16.sp,
                     textAlign = TextAlign.Start,
-                    fontWeight = FontWeight.Normal,
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        fontWeight = FontWeight.Normal
+                    ),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 16.dp)

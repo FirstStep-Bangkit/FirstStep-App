@@ -33,6 +33,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.firststepapp.navigation.Screen
 import com.example.firststepapp.ui.component.Question
 import com.example.firststepapp.ui.theme.FirstStepAppTheme
 import com.example.firststepapp.viewmodel.MainViewModel
@@ -81,7 +82,8 @@ fun Test(
                     questions = quizResponse?.questions.orEmpty() as List<String>,
                     selectedAnswers = selectedAnswers,
                     viewModel = viewModel,
-                    token = token
+                    token = token,
+                    navControl = navControl
                 )
             }
         }
@@ -119,6 +121,7 @@ fun Header() {
 
 @Composable
 fun ButtonSend(
+    navControl: NavHostController,
     questions: List<String>,
     selectedAnswers: Map<String, Int?>,
     viewModel: MainViewModel,
@@ -174,6 +177,13 @@ fun ButtonSend(
                 selectedAnswers[question] ?: 0
             }
             viewModel.predict(context, token, answers)
+
+            if (viewModel.predict(context,token,answers) != null){
+                navControl.navigate(Screen.Personality.route) {
+                    launchSingleTop = true
+                    popUpTo(Screen.Test.route) { inclusive = true }
+                }
+            }
 
             showDialog.value = false
         },
