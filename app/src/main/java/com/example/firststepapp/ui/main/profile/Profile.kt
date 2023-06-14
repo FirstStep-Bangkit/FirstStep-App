@@ -45,6 +45,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import coil.compose.rememberImagePainter
 import com.example.firststepapp.R
 import com.example.firststepapp.api.response.ProfileResult
 import com.example.firststepapp.navigation.Screen
@@ -121,6 +122,14 @@ fun Header (){
 fun Identity (
     profileResult: ProfileResult?
 ){
+    val profilePicture: Painter = rememberImagePainter(
+        data = profileResult?.profilePicture,
+        builder = {
+            placeholder(R.drawable.onboarding_one)
+            error(R.drawable.onboarding_one)
+        }
+    )
+
     Column(
         modifier = Modifier
             .padding(
@@ -137,12 +146,12 @@ fun Identity (
                 .size(150.dp)
                 .clip(CircleShape)
         ) {
-            val profilePicture = profileResult?.profilePicture ?: painterResource(R.drawable.onboarding_one)
+            //val profilePicture = profileResult?.profilePicture ?: painterResource(R.drawable.onboarding_one)
             Image(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(bottom = 10.dp),
-                painter = profilePicture as Painter,
+                painter = profilePicture,
                 contentDescription = "Profile"
             )
         }

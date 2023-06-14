@@ -32,6 +32,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.rememberImagePainter
 import com.example.firststepapp.R
 import com.example.firststepapp.api.response.DashboardResult
 import com.example.firststepapp.preferences.UserPreferences
@@ -81,7 +82,15 @@ fun LaunchedEffectComponent(viewModel: MainViewModel, token: String) {
 @Composable
 fun Headline(
     dashboardResult: DashboardResult?
-){
+) {
+    val profilePicture: Painter = rememberImagePainter(
+        data = dashboardResult?.profilePicture,
+        builder = {
+            placeholder(R.drawable.onboarding_one)
+            error(R.drawable.onboarding_one)
+        }
+    )
+
     Column(
         modifier = Modifier
             .padding(10.dp)
@@ -97,18 +106,16 @@ fun Headline(
                 modifier = Modifier.weight(1f)
             )
             Spacer(modifier = Modifier.width(20.dp))
-            val profilePicture = dashboardResult?.profilePicture ?: painterResource(R.drawable.onboarding_one)
             Box(
                 modifier = Modifier.size(50.dp)
                     .clip(CircleShape)
             ) {
                 Image(
                     modifier = Modifier.fillMaxSize(),
-                    painter = profilePicture as Painter,
+                    painter = profilePicture,
                     contentDescription = "Profile"
                 )
             }
-
         }
     }
 }
