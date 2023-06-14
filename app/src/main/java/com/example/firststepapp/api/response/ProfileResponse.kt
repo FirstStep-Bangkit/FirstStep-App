@@ -22,9 +22,12 @@ data class ProfileResult(
 	@field:SerializedName("name")
 	val name: String? = null,
 
-	@field:SerializedName("MBTI")
-	val mBTI: Any? = null,
+	@field:SerializedName("mbti")
+	val mbti: String? = null,
 
 	@field:SerializedName("status")
-	val status: String? = null
+	val status: String? = null,
+
+	@field:SerializedName("username")
+	val username: String? = null
 )
