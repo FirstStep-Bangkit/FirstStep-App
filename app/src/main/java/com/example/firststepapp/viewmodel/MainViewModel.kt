@@ -36,13 +36,13 @@ class MainViewModel(private val userPreferences: UserPreferences) : ViewModel() 
     val quizResponse = MutableLiveData<QuizResponse>()
     val _quizResponse: LiveData<QuizResponse> = quizResponse
 
-<<<<<<< HEAD
+
     val personalityResponse = MutableLiveData<PersonalityResponse>()
     val _personalityResponse: LiveData<PersonalityResponse> = personalityResponse
-=======
+
     private val answerResponse = MutableLiveData<AnswerResponse>()
     val _answerResponse: LiveData<AnswerResponse> = answerResponse
->>>>>>> b4c367648c7a8c7e44033b32ea685ffa40df1bc0
+
 
     companion object {
         private const val TAG = "MainViewModel"
@@ -163,7 +163,7 @@ class MainViewModel(private val userPreferences: UserPreferences) : ViewModel() 
         })
     }
 
-<<<<<<< HEAD
+
     fun personality(context: Context,token: String) {
         val client = ApiConfig.getApiService(context).personality(token)
         client.enqueue(object : Callback<PersonalityResponse> {
@@ -174,7 +174,17 @@ class MainViewModel(private val userPreferences: UserPreferences) : ViewModel() 
                 val responseBody = response.body()
                 if (response.isSuccessful && responseBody != null) {
                     personalityResponse.value = response.body()
-=======
+                } else {
+                    Log.e(TAG, "onFailure: ${response.code()}")
+                }
+            }
+
+            override fun onFailure(call: Call<PersonalityResponse>, t: Throwable) {
+                Log.e(TAG, "onFailure: ${t.message}")
+            }
+        })
+    }
+
     fun predict(context: Context, authorization: String, input: List<Int>) {
         val predictRequest = PredictRequest(input)
         val client = ApiConfig.getApiService(context).predict(authorization, predictRequest)
@@ -186,23 +196,19 @@ class MainViewModel(private val userPreferences: UserPreferences) : ViewModel() 
                 val responseBody = response.body()
                 if (response.isSuccessful && responseBody != null) {
                     answerResponse.value = response.body()
->>>>>>> b4c367648c7a8c7e44033b32ea685ffa40df1bc0
+
                 } else {
                     Log.e(TAG, "onFailure: ${response.code()}")
                 }
             }
 
-<<<<<<< HEAD
-            override fun onFailure(call: Call<PersonalityResponse>, t: Throwable) {
-=======
+
+
+
             override fun onFailure(call: Call<AnswerResponse>, t: Throwable) {
->>>>>>> b4c367648c7a8c7e44033b32ea685ffa40df1bc0
+
                 Log.e(TAG, "onFailure: ${t.message}")
             }
         })
     }
-<<<<<<< HEAD
-
-=======
->>>>>>> b4c367648c7a8c7e44033b32ea685ffa40df1bc0
 }

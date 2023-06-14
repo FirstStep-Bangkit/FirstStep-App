@@ -65,17 +65,17 @@ interface ApiService {
     fun quiz(
         @Header("Authorization") authorization: String
     ): Call<QuizResponse>
-<<<<<<< HEAD
+
 
     @GET("personality")
     fun personality(
         @Header("Authorization9") authorization: String
     ): Call<PersonalityResponse>
-=======
+
     @POST("predict")
     fun predict(
         @Header("Authorization") authorization: String,
         @Body request: PredictRequest
     ): Call<AnswerResponse>
->>>>>>> b4c367648c7a8c7e44033b32ea685ffa40df1bc0
+
 }
