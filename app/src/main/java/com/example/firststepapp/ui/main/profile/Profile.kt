@@ -205,7 +205,7 @@ fun Status(
                 Spacer(modifier = Modifier.weight(0.1f))
                 Text(
                     modifier = Modifier.padding(end = 20.dp),
-                    text = profileResult?.mBTI.toString(),
+                    text = profileResult?.mbti.toString(),
                     style = MaterialTheme.typography.titleMedium.copy(
                         color = MaterialTheme.colorScheme.onPrimary
                     )
