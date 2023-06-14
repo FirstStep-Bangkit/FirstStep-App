@@ -1,5 +1,6 @@
 package com.example.firststepapp.api
 
+import com.example.firststepapp.api.response.AnswerResponse
 import com.example.firststepapp.api.response.ChangePasswordResponse
 import com.example.firststepapp.api.response.DashboardResponse
 import com.example.firststepapp.api.response.DeleteUserResponse
@@ -7,7 +8,9 @@ import com.example.firststepapp.api.response.LoginResponse
 import com.example.firststepapp.api.response.ProfileResponse
 import com.example.firststepapp.api.response.QuizResponse
 import com.example.firststepapp.api.response.RegisterResponse
+import com.example.firststepapp.ui.data.PredictRequest
 import retrofit2.Call
+import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
@@ -61,4 +64,9 @@ interface ApiService {
     fun quiz(
         @Header("Authorization") authorization: String
     ): Call<QuizResponse>
+    @POST("predict")
+    fun predict(
+        @Header("Authorization") authorization: String,
+        @Body request: PredictRequest
+    ): Call<AnswerResponse>
 }

@@ -9,12 +9,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.firststepapp.api.ApiConfig
+import com.example.firststepapp.api.response.AnswerResponse
 import com.example.firststepapp.api.response.ChangePasswordResponse
 import com.example.firststepapp.api.response.DashboardResponse
 import com.example.firststepapp.api.response.DeleteUserResponse
 import com.example.firststepapp.api.response.ProfileResponse
 import com.example.firststepapp.api.response.QuizResponse
 import com.example.firststepapp.preferences.UserPreferences
+import com.example.firststepapp.ui.data.PredictRequest
 
 class MainViewModel(private val userPreferences: UserPreferences) : ViewModel() {
 
@@ -32,6 +34,9 @@ class MainViewModel(private val userPreferences: UserPreferences) : ViewModel() 
 
     val quizResponse = MutableLiveData<QuizResponse>()
     val _quizResponse: LiveData<QuizResponse> = quizResponse
+
+    private val answerResponse = MutableLiveData<AnswerResponse>()
+    val _answerResponse: LiveData<AnswerResponse> = answerResponse
 
     companion object {
         private const val TAG = "MainViewModel"
@@ -149,6 +154,28 @@ class MainViewModel(private val userPreferences: UserPreferences) : ViewModel() 
                 Log.e(TAG, "onFailure: ${t.message}")
             }
 
+        })
+    }
+
+    fun predict(context: Context, authorization: String, input: List<Int>) {
+        val predictRequest = PredictRequest(input)
+        val client = ApiConfig.getApiService(context).predict(authorization, predictRequest)
+        client.enqueue(object : Callback<AnswerResponse> {
+            override fun onResponse(
+                call: Call<AnswerResponse>,
+                response: Response<AnswerResponse>
+            ) {
+                val responseBody = response.body()
+                if (response.isSuccessful && responseBody != null) {
+                    answerResponse.value = response.body()
+                } else {
+                    Log.e(TAG, "onFailure: ${response.code()}")
+                }
+            }
+
+            override fun onFailure(call: Call<AnswerResponse>, t: Throwable) {
+                Log.e(TAG, "onFailure: ${t.message}")
+            }
         })
     }
 }
