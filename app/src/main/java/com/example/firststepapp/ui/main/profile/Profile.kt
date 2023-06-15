@@ -1,8 +1,11 @@
 package com.example.firststepapp.ui.main.profile
 
 import android.app.Activity
+import android.content.ContentValues.TAG
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.provider.MediaStore
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -87,7 +90,8 @@ fun Profile(
                 .padding(innerPadding)
         ) {
             Header()
-            Identity(profileResponse?.profileResult)//, onProfilePictureClick = {  })
+            //Identity(profileResponse?.profileResult)//, onProfilePictureClick = {  })
+            Identity(profileResponse?.profileResult, viewModel, token)
             Status(profileResponse?.profileResult)
             Setting(navControl, authViewModel, viewModel)
             LogoutButton(
@@ -137,6 +141,8 @@ fun Header (){
 @Composable
 fun Identity(
     profileResult: ProfileResult?,
+    viewModel: MainViewModel,
+    token: String
     //onProfilePictureClick: () -> Unit
 ) {
     val profilePicture: Painter = rememberImagePainter(
@@ -148,6 +154,11 @@ fun Identity(
     )
 
     var isDropdownExpanded by remember { mutableStateOf(false) }
+
+    val context = LocalContext.current
+    LaunchedEffect(profileResult) {
+        viewModel.profile(context, token)
+    }
 
     Column(
         modifier = Modifier
@@ -198,14 +209,28 @@ fun Identity(
                     }
                 }
 
+                val context = LocalContext.current
+
                 val launcherIntentGallery = rememberLauncherForActivityResult(
                     contract = ActivityResultContracts.StartActivityForResult()
                 ) { result ->
                     if (result.resultCode == Activity.RESULT_OK) {
                         val selectedImg = result.data?.data as Uri
                         selectedImg.let { uri ->
-
+                            val file = getFileFromUri(context, uri)
+                            if (file != null) {
+                                viewModel.uploadPhotoProfile(context, token, file) { success ->
+                                    if (success) {
+                                        viewModel.profile(context, token)
+                                    } else {
+                                        Log.e(TAG, "Failed to upload profile photo")
+                                    }
+                                }
+                            } else {
+                                Log.e(TAG, "Failed to get file from URI: $uri")
+                            }
                         }
+
                     }
                 }
 
@@ -252,29 +277,17 @@ fun Identity(
         )
     }
 
-    val context = LocalContext.current
-
 }
 
-//@Composable
-//fun startGallery() {
-//    val launcherIntentGallery = rememberLauncherForActivityResult(
-//        contract = ActivityResultContracts.StartActivityForResult()
-//    ) { result ->
-//        if (result.resultCode == Activity.RESULT_OK) {
-//            val selectedImg = result.data?.data as Uri
-//            selectedImg.let { uri ->
-
-//            }
-//        }
-//    }
-
-//    val intent = Intent(Intent.ACTION_GET_CONTENT)
-//    intent.type = "image/*"
-//    val chooser = Intent.createChooser(intent, "Pilih gambar")
-//    launcherIntentGallery.launch(chooser)
-//}
-
+private fun getFileFromUri(context: Context, uri: Uri): File? {
+    val contentResolver = context.contentResolver
+    val inputStream = contentResolver.openInputStream(uri)
+    val file = File(context.cacheDir, "temp_image.jpg")
+    file.outputStream().use { outputStream ->
+        inputStream?.copyTo(outputStream)
+    }
+    return file
+}
 
 @Composable
 fun Status(

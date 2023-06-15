@@ -240,11 +240,11 @@ class MainViewModel(private val userPreferences: UserPreferences) : ViewModel() 
         })
     }
 
-    fun uploadPhotoProfile(context: Context, token: String, photo: File){
+    fun uploadPhotoProfile(context: Context, token: String, photo: File, callback: (Boolean) -> Unit){
 
         val requestImageFile = photo.asRequestBody("image/jpeg".toMediaType())
         val imageMultipart: MultipartBody.Part = MultipartBody.Part.createFormData(
-            "photo", photo.name, requestImageFile
+            "photo_profile", photo.name, requestImageFile
         )
 
         val client = ApiConfig.getApiService(context).uploadPhoto(imageMultipart, token)
@@ -256,13 +256,16 @@ class MainViewModel(private val userPreferences: UserPreferences) : ViewModel() 
                 val responseBody = response.body()
                 if (response.isSuccessful && responseBody != null) {
                     uploadPhotoProfileResponse.value = response.body()
+                    callback(true)
                 } else {
                     Log.e(TAG, "onFailure: ${response.message()}")
+                    callback(false)
                 }
             }
 
             override fun onFailure(call: Call<UploadPhotoProfileResponse>, t: Throwable) {
                 Log.e(TAG, "onFailure: ${t.message}")
+                callback(false)
             }
 
         })

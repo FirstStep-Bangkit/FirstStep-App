@@ -85,7 +85,7 @@ interface ApiService {
     @Multipart
     @POST("uploadphoto")
     fun uploadPhoto(
-        @Part photo: MultipartBody.Part,
+        @Part photo_profile: MultipartBody.Part,
         @Header("Authorization") token: String
     ): Call<UploadPhotoProfileResponse>
 
