@@ -34,7 +34,7 @@ fun SplashScreen(navController: NavHostController, viewModel: AuthViewModel) {
             Log.e("AutentikasiActivity", "Token changed to $token")
 
             if (token == UserPreferences.preferenceDefaultValue) {
-                navController.navigate(Screen.Login.route) {
+                navController.navigate(Screen.OnBoarding.route) {
                     popUpTo(Screen.SplashScreen.route) { inclusive = true }
                 }
             } else {
@@ -53,7 +53,7 @@ fun SplashScreen(navController: NavHostController, viewModel: AuthViewModel) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
-            painter = painterResource(R.drawable.onboarding_one),
+            painter = painterResource(R.drawable.logo),
             contentDescription = "SplashScreen",
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )

@@ -15,9 +15,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.ClickableText
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -69,12 +71,12 @@ fun Login(
     Column(
         modifier = Modifier
             .padding(40.dp)
-            .fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
-            painter = painterResource(R.drawable.onboarding_one),
+            painter = painterResource(R.drawable.logo),
             contentDescription = "logo"
         )
         Text(
@@ -225,25 +227,6 @@ fun Login(
                 }
             )
         }
-
-        //if (showDialog.value) {
-        //    AlertDialog(
-        //        onDismissRequest = { showDialog.value = false },
-        //        title = {
-        //            Text(text = "Kesalahan")
-        //        },
-        //        text = {
-        //            Text(text = "Login gagal, silahkan coba lagi !!!")
-        //        },
-        //        confirmButton = {
-        //            Button(
-        //                onClick = { showDialog.value = false },
-        //            ) {
-        //                Text(text = "Tutup")
-        //            }
-        //        }
-        //    )
-        //}
 
         // Konfirmasi punya akun atau belum
         Row(

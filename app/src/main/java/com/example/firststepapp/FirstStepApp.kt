@@ -22,6 +22,7 @@ import com.example.firststepapp.ui.main.personality.Personality
 import com.example.firststepapp.ui.main.profile.changepassword.ChangePassword
 import com.example.firststepapp.ui.main.profile.Profile
 import com.example.firststepapp.ui.main.test.Test
+import com.example.firststepapp.ui.onboarding.OnBoarding
 import com.example.firststepapp.ui.register.Register
 import com.example.firststepapp.ui.splashscreen.SplashScreen
 import com.example.firststepapp.ui.theme.FirstStepAppTheme
@@ -54,6 +55,11 @@ fun FirstStepApp() {
                 SplashScreen(
                     navController = navController,
                     viewModel = authViewModel
+                )
+            }
+            composable(Screen.OnBoarding.route){
+                OnBoarding(
+                    navControl = navController
                 )
             }
             composable(Screen.Login.route) {

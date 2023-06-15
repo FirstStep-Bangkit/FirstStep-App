@@ -37,7 +37,7 @@ import com.google.accompanist.pager.rememberPagerState
 @OptIn(ExperimentalAnimationApi::class, ExperimentalPagerApi::class)
 @Composable
 fun OnBoarding(
-//    navControl: NavHostController,
+    navControl: NavHostController,
 ) {
 
     val pages = listOf(
@@ -67,8 +67,8 @@ fun OnBoarding(
             pagerState = pagerState
         ) {
 //            welcomeViewModel.saveOnBoardingState(completed = true)
-//            navControl.popBackStack()
-//            navControl.navigate(Screen.Login.route)
+            navControl.popBackStack()
+            navControl.navigate(Screen.Login.route)
         }
     }
 }
@@ -131,6 +131,7 @@ fun FinishButton(
             Button(
                 onClick = onClick,
                 colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = Color.White
                 )
             ) {
@@ -167,5 +168,5 @@ fun ThirdOnBoardingScreenPreview() {
 @Composable
 @Preview(showBackground = true)
 fun OnBoardingScreenPreview() {
-    OnBoarding()
+    //OnBoarding()
 }
