@@ -1,6 +1,11 @@
 package com.example.firststepapp.ui.main.profile
 
+import android.app.Activity
+import android.content.Intent
+import android.net.Uri
 import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -60,6 +65,9 @@ import com.example.firststepapp.navigation.Screen
 import com.example.firststepapp.ui.theme.FirstStepAppTheme
 import com.example.firststepapp.viewmodel.AuthViewModel
 import com.example.firststepapp.viewmodel.MainViewModel
+import java.io.File
+
+private var getFile: File? = null
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -190,13 +198,29 @@ fun Identity(
                     }
                 }
 
+                val launcherIntentGallery = rememberLauncherForActivityResult(
+                    contract = ActivityResultContracts.StartActivityForResult()
+                ) { result ->
+                    if (result.resultCode == Activity.RESULT_OK) {
+                        val selectedImg = result.data?.data as Uri
+                        selectedImg.let { uri ->
+
+                        }
+                    }
+                }
+
                 DropdownMenu(
                     expanded = isDropdownExpanded,
                     onDismissRequest = { isDropdownExpanded = false }
                 ) {
                     DropdownMenuItem(onClick = {
                         isDropdownExpanded = false
-                        // Handle "Ganti Foto" option
+
+                        val intent = Intent(Intent.ACTION_GET_CONTENT)
+                        intent.type = "image/*"
+                        val chooser = Intent.createChooser(intent, "Pilih gambar")
+                        launcherIntentGallery.launch(chooser)
+
                     }) {
                         Text(text = "Ganti Foto")
                     }
@@ -227,7 +251,30 @@ fun Identity(
             style = MaterialTheme.typography.bodyLarge
         )
     }
+
+    val context = LocalContext.current
+
 }
+
+//@Composable
+//fun startGallery() {
+//    val launcherIntentGallery = rememberLauncherForActivityResult(
+//        contract = ActivityResultContracts.StartActivityForResult()
+//    ) { result ->
+//        if (result.resultCode == Activity.RESULT_OK) {
+//            val selectedImg = result.data?.data as Uri
+//            selectedImg.let { uri ->
+
+//            }
+//        }
+//    }
+
+//    val intent = Intent(Intent.ACTION_GET_CONTENT)
+//    intent.type = "image/*"
+//    val chooser = Intent.createChooser(intent, "Pilih gambar")
+//    launcherIntentGallery.launch(chooser)
+//}
+
 
 @Composable
 fun Status(

@@ -10,6 +10,6 @@ data class UploadPhotoProfileResponse(
 	@field:SerializedName("error")
 	val error: Boolean? = null,
 
-	@field:SerializedName("message")
-	val message: String? = null
+	@field:SerializedName("msg")
+	val msg: String? = null
 )
