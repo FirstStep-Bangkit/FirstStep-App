@@ -83,13 +83,11 @@ fun LaunchedEffectComponent(viewModel: MainViewModel, token: String) {
 fun Headline(
     dashboardResult: DashboardResult?
 ) {
-    val profilePicture: Painter = rememberImagePainter(
-        data = dashboardResult?.profilePicture,
-        builder = {
-            placeholder(R.drawable.onboarding_one)
-            error(R.drawable.onboarding_one)
-        }
-    )
+    val profilePicture: Painter = if (dashboardResult?.profilePicture == null) {
+        painterResource(R.drawable.onboarding_one)
+    } else {
+        rememberImagePainter(data = dashboardResult?.profilePicture)
+    }
 
     Column(
         modifier = Modifier

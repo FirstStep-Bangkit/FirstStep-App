@@ -7,6 +7,7 @@ import android.content.Intent
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -143,15 +144,12 @@ fun Identity(
     profileResult: ProfileResult?,
     viewModel: MainViewModel,
     token: String
-    //onProfilePictureClick: () -> Unit
 ) {
-    val profilePicture: Painter = rememberImagePainter(
-        data = profileResult?.profilePicture,
-        builder = {
-            placeholder(R.drawable.onboarding_one)
-            error(R.drawable.onboarding_one)
-        }
-    )
+    val profilePicture: Painter = if (profileResult?.profilePicture == null) {
+        painterResource(R.drawable.onboarding_one)
+    } else {
+        rememberImagePainter(data = profileResult?.profilePicture)
+    }
 
     var isDropdownExpanded by remember { mutableStateOf(false) }
 
@@ -221,8 +219,10 @@ fun Identity(
                             if (file != null) {
                                 viewModel.uploadPhotoProfile(context, token, file) { success ->
                                     if (success) {
+                                        Toast.makeText(context, "Berhasil upload foto", Toast.LENGTH_SHORT).show()
                                         viewModel.profile(context, token)
                                     } else {
+                                        Toast.makeText(context, "Gagal upload foto", Toast.LENGTH_SHORT).show()
                                         Log.e(TAG, "Failed to upload profile photo")
                                     }
                                 }
@@ -251,7 +251,15 @@ fun Identity(
                     }
                     DropdownMenuItem(onClick = {
                         isDropdownExpanded = false
-                        // Handle "Hapus Foto" option
+                        viewModel.deleteProfile(context, token) { success ->
+                            if (success) {
+                                Toast.makeText(context, "Berhasil hapus foto", Toast.LENGTH_SHORT).show()
+                                viewModel.profile(context, token)
+                            } else {
+                                Toast.makeText(context, "Gagal hapus foto", Toast.LENGTH_SHORT).show()
+                                Log.e(TAG, "Failed to upload profile photo")
+                            }
+                        }
                     }) {
                         Text(text = "Hapus Foto")
                     }

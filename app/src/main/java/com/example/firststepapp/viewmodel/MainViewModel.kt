@@ -219,7 +219,7 @@ class MainViewModel(private val userPreferences: UserPreferences) : ViewModel() 
         })
     }
 
-    fun deleteProfile(context: Context, token: String){
+    fun deleteProfile(context: Context, token: String, callback: (Boolean) -> Unit){
         val client = ApiConfig.getApiService(context).deleteProfile(token)
         client.enqueue(object : Callback<DeleteProfileResponse> {
             override fun onResponse(
@@ -229,13 +229,16 @@ class MainViewModel(private val userPreferences: UserPreferences) : ViewModel() 
                 val responseBody = response.body()
                 if (response.isSuccessful && responseBody != null) {
                     deleteProfileResponse.value = response.body()
+                    callback(true)
                 } else {
                     Log.e(TAG, "onFailure: ${response.code()}")
+                    callback(false)
                 }
             }
 
             override fun onFailure(call: Call<DeleteProfileResponse>, t: Throwable) {
                 Log.e(TAG, "onFailure: ${t.message}")
+                callback(false)
             }
         })
     }
