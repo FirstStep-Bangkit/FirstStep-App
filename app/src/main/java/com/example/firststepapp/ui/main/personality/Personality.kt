@@ -12,12 +12,15 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -86,6 +89,7 @@ fun Personality (
                     description = it,
                 )
             }
+            ButtonChat(navControl = navControl)
         }
     }
     LaunchedEffectComponent(viewModel, token)
@@ -257,6 +261,45 @@ fun Content(
                         .padding(vertical = 16.dp)
                 )
             }
+        }
+    }
+}
+
+@Composable
+fun ButtonChat(
+    navControl: NavHostController
+){
+    Column(
+        modifier = Modifier
+            .padding(
+                start = 20.dp,
+                top = 30.dp,
+                bottom = 30.dp,
+                end = 20.dp
+            )
+            .fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Button(
+            onClick = {
+                navControl.navigate(Screen.Chat.route) {
+                    launchSingleTop = true
+                    popUpTo(Screen.Personality.route) { inclusive = true }
+                }
+            },
+            modifier = Modifier
+                .width(300.dp),
+            shape = RoundedCornerShape(size = 10.dp),
+            elevation = ButtonDefaults.buttonElevation(
+                defaultElevation = 5.dp,
+                pressedElevation = 0.dp,
+                disabledElevation = 0.dp
+            ),
+        ) {
+            androidx.compose.material3.Text(
+                text = "Konsultasikan ke ahlinya yuk!",
+                style = MaterialTheme.typography.bodyLarge
+            )
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.example.firststepapp.ui.main.home
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -15,6 +16,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -26,9 +28,11 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -56,11 +60,32 @@ fun Home (
         Column(
             modifier = Modifier
                 .padding(innerPadding)
-                .padding(20.dp)
                 .fillMaxSize()
+                .background(MaterialTheme.colorScheme.inverseOnSurface)
         ) {
             Headline(dashboardResponse?.dashboardResult)
-            IconGrid(navController = navControl)
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .background(Color.Blue)
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp)
+                )
+                Box(
+                    modifier = Modifier
+                        .background(Color.White, shape = RoundedCornerShape(10.dp))
+                        .padding(20.dp)
+                ) {
+                    Column {
+                        IconGrid(navController = navControl)
+                        Article()
+                    }
+                }
+            }
         }
     }
 
@@ -87,7 +112,12 @@ fun Headline(
 
     Column(
         modifier = Modifier
-            .padding(10.dp)
+            .padding(
+                top = 40.dp,
+                start = 20.dp,
+                end = 20.dp,
+                bottom = 40.dp
+            )
             .fillMaxWidth()
     ) {
         Row(
@@ -101,7 +131,8 @@ fun Headline(
             )
             Spacer(modifier = Modifier.width(20.dp))
             Box(
-                modifier = Modifier.size(50.dp)
+                modifier = Modifier
+                    .size(50.dp)
                     .clip(CircleShape)
             ) {
                 Image(
@@ -121,7 +152,9 @@ fun IconGrid(navController: NavHostController) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         contentPadding = PaddingValues(16.dp),
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .padding(vertical = 20.dp)
+            .fillMaxWidth()
     ) {
         items(icons) { iconWithText ->
             ClickableIconWithText(
@@ -131,6 +164,29 @@ fun IconGrid(navController: NavHostController) {
                 navController = navController
             )
         }
+    }
+}
+
+@Composable
+fun Article(){
+    Column(
+        modifier = Modifier
+            .padding(horizontal = 10.dp, vertical = 30.dp)
+    ) {
+        Text(
+            style = MaterialTheme.typography.titleLarge,
+            text = "Artikel",
+            modifier = Modifier
+                .padding(bottom = 20.dp)
+        )
+        Text(
+            text = "Belum ada artikel yang bisa ditampilkan",
+            style = MaterialTheme.typography.bodyMedium.copy(
+                fontStyle = FontStyle.Italic
+            ),
+            modifier = Modifier
+                .fillMaxWidth(),
+        )
     }
 }
 
