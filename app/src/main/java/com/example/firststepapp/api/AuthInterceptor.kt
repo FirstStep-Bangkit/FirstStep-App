@@ -1,7 +1,6 @@
 package com.example.firststepapp.api
 
 import com.example.firststepapp.preferences.UserPreferences
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor

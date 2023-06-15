@@ -155,6 +155,11 @@ fun Identity(
         "ISFJ" -> R.drawable.isfj
         "ISFP" -> R.drawable.isfp
         "ISTP" -> R.drawable.istp
+        "ENFJ" -> R.drawable.enfj
+        "ENFP" -> R.drawable.enfp
+        "ESFJ" -> R.drawable.esfj
+        "INFP" -> R.drawable.infp
+        "ISTJ" -> R.drawable.istj
         else -> R.drawable.onboarding_one
     }
 

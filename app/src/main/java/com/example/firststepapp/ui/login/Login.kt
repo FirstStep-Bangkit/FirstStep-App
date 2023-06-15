@@ -1,6 +1,7 @@
 package com.example.firststepapp.ui.login
 
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.Image
@@ -42,6 +43,7 @@ import androidx.navigation.NavHostController
 import com.example.firststepapp.R
 import com.example.firststepapp.navigation.Screen
 import com.example.firststepapp.preferences.UserPreferences.Companion.preferenceDefaultValue
+import com.example.firststepapp.ui.register.RegisterStatus
 import com.example.firststepapp.viewmodel.AuthViewModel
 
 @Composable
@@ -153,27 +155,37 @@ fun Login(
 
         //val showDialog = remember { mutableStateOf(false) }
 
+        var loginStatus by remember { mutableStateOf(LoginStatus.NONE) }
+        var loginMessage by remember { mutableStateOf("") }
+        var showLoginStatus by remember { mutableStateOf(false) }
+
         Button(
             onClick = {
                 val email = email
                 val password = password
 
-                viewModel.login(context, email, password)
+                //viewModel.login(context, email, password)
 
-                viewModel.getUserPreferences("Token").observe(context as LifecycleOwner) { token ->
-                    Log.e("AutentikasiActivity", "Token : $token")
-                    if (token != preferenceDefaultValue) {
-                        Log.e("AutentikasiActivity : ", "Menuju ke MainActivity")
-                        if (viewModel.login(context, email, password) != null) {
-                            navController.navigate(Screen.Home.route) {
-                                launchSingleTop = true
-                                popUpTo(Screen.Login.route) { inclusive = true }
+                viewModel.login(context, email, password) { success ->
+                    if (success) {
+                        viewModel.getUserPreferences("Token").observe(context as LifecycleOwner) { token ->
+                            Log.e("AutentikasiActivity", "Token : $token")
+                            if (token != preferenceDefaultValue) {
+                                Log.e("AutentikasiActivity : ", "Menuju ke MainActivity")
+                                Toast.makeText(context, "Login berhasil!", Toast.LENGTH_SHORT)
+                                    .show()
+                                navController.navigate(Screen.Home.route) {
+                                    popUpTo(Screen.Login.route) { inclusive = true }
+                                }
                             }
                         }
+                    } else {
+                            loginStatus = LoginStatus.FAILURE
+                            loginMessage = "Register gagal"
+                            showLoginStatus = true
                     }
                 }
             },
-
             modifier = Modifier
                 .padding(top = 40.dp)
                 .width(154.dp),
@@ -187,6 +199,30 @@ fun Login(
             Text(
                 text = "Login",
                 style = MaterialTheme.typography.bodyMedium
+            )
+        }
+
+        if (loginStatus != LoginStatus.NONE) {
+            AlertDialog(
+                onDismissRequest = {
+                    loginStatus = LoginStatus.NONE
+                },
+                title = {
+                    //Text(text = if (registerStatus == RegisterStatus.SUCCESS) "Sukses" else "Gagal")
+                    Text(text = "Gagal")
+                },
+                text = {
+                    Text(text = loginMessage)
+                },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            loginStatus = LoginStatus.NONE
+                        }
+                    ) {
+                        Text("OK")
+                    }
+                }
             )
         }
 

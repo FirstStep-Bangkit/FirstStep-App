@@ -5,7 +5,6 @@ import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -19,7 +18,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -36,7 +34,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -70,8 +67,6 @@ import com.example.firststepapp.ui.theme.FirstStepAppTheme
 import com.example.firststepapp.viewmodel.AuthViewModel
 import com.example.firststepapp.viewmodel.MainViewModel
 import java.io.File
-
-private var getFile: File? = null
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -148,7 +143,7 @@ fun Identity(
     val profilePicture: Painter = if (profileResult?.profilePicture == null) {
         painterResource(R.drawable.onboarding_one)
     } else {
-        rememberImagePainter(data = profileResult?.profilePicture)
+        rememberImagePainter(data = profileResult.profilePicture)
     }
 
     var isDropdownExpanded by remember { mutableStateOf(false) }

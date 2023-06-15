@@ -1,5 +1,6 @@
 package com.example.firststepapp.ui.register
 
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.Image
@@ -266,16 +267,17 @@ fun Register(
             onClick = {
                 viewModel.register(context, firstName.text, lastName.text, email, password) { success ->
                     if (success) {
-                        registerStatus = RegisterStatus.SUCCESS
-                        registerMessage = "Register berhasil"
-                        showRegisterStatus = true
+                        //registerStatus = RegisterStatus.SUCCESS
+                        //registerMessage = "Register berhasil"
+                        //showRegisterStatus = true
 
-                        CoroutineScope(Dispatchers.Main).launch {
-                            delay(5000L)
-                            registerStatus = RegisterStatus.NONE
-                            showRegisterStatus = false
-                        }
+                        //CoroutineScope(Dispatchers.Main).launch {
+                        //    delay(5000L)
+                        //    registerStatus = RegisterStatus.NONE
+                        //    showRegisterStatus = false
+                        //}
 
+                        Toast.makeText(context, "Registrasi berhasil!", Toast.LENGTH_SHORT).show()
                         navController.navigate(Screen.Login.route) {
                             popUpTo(Screen.Register.route) { inclusive = true }
                         }
@@ -310,7 +312,8 @@ fun Register(
                     registerStatus = RegisterStatus.NONE
                 },
                 title = {
-                    Text(text = if (registerStatus == RegisterStatus.SUCCESS) "Sukses" else "Gagal")
+                    //Text(text = if (registerStatus == RegisterStatus.SUCCESS) "Sukses" else "Gagal")
+                    Text(text = "Gagal")
                 },
                 text = {
                     Text(text = registerMessage)

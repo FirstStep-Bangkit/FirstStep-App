@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -31,18 +32,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberImagePainter
 import com.example.firststepapp.R
 import com.example.firststepapp.api.response.DashboardResult
-import com.example.firststepapp.preferences.UserPreferences
-import com.example.firststepapp.preferences.dataStore
 import com.example.firststepapp.ui.component.ClickableIconWithText
 import com.example.firststepapp.ui.component.IconHome
 import com.example.firststepapp.ui.theme.FirstStepAppTheme
-import com.example.firststepapp.viewmodel.AuthViewModel
 import com.example.firststepapp.viewmodel.MainViewModel
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid as LazyVerticalGrid
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -86,7 +82,7 @@ fun Headline(
     val profilePicture: Painter = if (dashboardResult?.profilePicture == null) {
         painterResource(R.drawable.onboarding_one)
     } else {
-        rememberImagePainter(data = dashboardResult?.profilePicture)
+        rememberImagePainter(data = dashboardResult.profilePicture)
     }
 
     Column(

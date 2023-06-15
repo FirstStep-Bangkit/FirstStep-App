@@ -59,7 +59,7 @@ class AuthViewModel (private val preference : UserPreferences) : ViewModel() {
         })
     }
 
-    fun login (token: Context, email: String, password: String){
+    fun login (token: Context, email: String, password: String, callback: (Boolean) -> Unit){
         _isLoading.value = true
         val client = ApiConfig.getApiService(token).login(email, password)
         client.enqueue(object : Callback<LoginResponse> {
@@ -71,6 +71,7 @@ class AuthViewModel (private val preference : UserPreferences) : ViewModel() {
                 val responseBody = response.body()
                 if (response.isSuccessful && responseBody != null) {
                     loginResponse.value = response.body()
+                    callback(true)
 
                     val token = response.body()!!.loginResult?.token
                     val name = response.body()!!.loginResult?.name
@@ -86,12 +87,14 @@ class AuthViewModel (private val preference : UserPreferences) : ViewModel() {
                     }
                 } else {
                     Log.e(TAG, "onFailure: ${response.message()}")
+                    callback(false)
                 }
             }
 
             override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
                 _isLoading.value = false
                 Log.e(TAG, "onFailure: ${t.message}")
+                callback(false)
             }
         })
     }

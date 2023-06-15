@@ -1,6 +1,5 @@
 package com.example.firststepapp.ui.component
 
-import android.graphics.drawable.Icon
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
