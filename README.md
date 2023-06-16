@@ -7,7 +7,10 @@ Capstone Project Bangkit Academy 2023 Batch 1 (Mobile Development) <br>
 <img src="https://drive.google.com/uc?export=view&id=12c3R_6P-wi4cgL2sr3mBikuxvBlc7sKQ" alt="personality" width="200" height="400">
 <img src="https://drive.google.com/uc?export=view&id=1j32UQajK3TnDhG3AFvLUVNb2wTwhLJGN" alt="change_password" width="200" height="400">
 <img src="https://drive.google.com/uc?export=view&id=177z7wvKsC6llMsbFwvnvNRS_NWEYT_Ke" alt="delete_account" width="200" height="400">
-
+<img src="https://drive.google.com/uc?export=view&id=1xSGHQBn_C4sB5XKbvndpgmsCL0vnOUBG" alt="register" width="200" height="400">
+<img src="https://drive.google.com/uc?export=view&id=1C2RFHidc2HZK7-RmOB9IP_cueTh1qON-" alt="login" width="200" height="400">
+## APK Bundle
+This APK bundle : [FirstStep.apk](https://drive.google.com/file/d/1a0d_nyHKi3LI2igr_Uxiv9uFUT6nshgX/view?usp=sharing)
 ## About Our App
 This application is an Indonesian MBTI test (16 personality) application which includes test features, chat with counsellors, personality descriptions and profiles. The test results on the application can be consulted with the counsellor through the chat feature (chat feature is in the development stage). Then on the profile, the user can change the profile photo, password and delete the account.
 ## Repository Supporting This Application
@@ -29,7 +32,7 @@ This application is an Indonesian MBTI test (16 personality) application which i
 1. Clone this repository
 2. Open in Android Studio (according to requirements)
 3. Connect your device in android studio
-   * In virtual device 
+   * In virtual device : Click [Run With ADV](https://developer.android.com/studio/run/managing-avds)
    * In real device : Click [Connect With USB Debugging](https://developer.android.com/codelabs/basic-android-kotlin-compose-connect-device#0) or [Connect With Wireless Debugging](https://developer.android.com/studio/run/device)
 4. Run your Android Studio: Click [Documentation](https://developer.android.com/studio/run/managing-avds)
 ## Library
