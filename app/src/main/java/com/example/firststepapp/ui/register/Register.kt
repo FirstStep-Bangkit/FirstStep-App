@@ -325,7 +325,6 @@ fun Register(
                     registerStatus = RegisterStatus.NONE
                 },
                 title = {
-                    //Text(text = if (registerStatus == RegisterStatus.SUCCESS) "Sukses" else "Gagal")
                     Text(text = "Gagal")
                 },
                 text = {

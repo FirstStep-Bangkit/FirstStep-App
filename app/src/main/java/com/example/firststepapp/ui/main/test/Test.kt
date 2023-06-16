@@ -77,7 +77,6 @@ fun Test(
                         }
                     }
                 }
-                //ButtonSend(quizResponse?.questions.orEmpty() as List<String>, selectedAnswers)
                 ButtonSend(
                     questions = quizResponse?.questions.orEmpty() as List<String>,
                     selectedAnswers = selectedAnswers,

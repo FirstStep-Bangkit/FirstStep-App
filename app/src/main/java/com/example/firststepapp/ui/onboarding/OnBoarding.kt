@@ -66,7 +66,6 @@ fun OnBoarding(
             modifier = Modifier.weight(1f),
             pagerState = pagerState
         ) {
-//            welcomeViewModel.saveOnBoardingState(completed = true)
             navControl.popBackStack()
             navControl.navigate(Screen.Login.route)
         }

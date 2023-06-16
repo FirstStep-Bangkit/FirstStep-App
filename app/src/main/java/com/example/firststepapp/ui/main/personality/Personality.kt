@@ -243,7 +243,7 @@ fun Content(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .animateContentSize() // edit animation here
+                .animateContentSize()
                 .padding(horizontal = 16.dp, vertical = 8.dp)
         ) {
             Row(

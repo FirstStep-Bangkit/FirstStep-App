@@ -174,8 +174,6 @@ fun Login(
             },
         )
 
-        //val showDialog = remember { mutableStateOf(false) }
-
         var loginStatus by remember { mutableStateOf(LoginStatus.NONE) }
         var loginMessage by remember { mutableStateOf("") }
         var showLoginStatus by remember { mutableStateOf(false) }
@@ -184,8 +182,6 @@ fun Login(
             onClick = {
                 val email = email
                 val password = password
-
-                //viewModel.login(context, email, password)
 
                 viewModel.login(context, email, password) { success ->
                     if (success) {
@@ -241,7 +237,6 @@ fun Login(
                     loginStatus = LoginStatus.NONE
                 },
                 title = {
-                    //Text(text = if (registerStatus == RegisterStatus.SUCCESS) "Sukses" else "Gagal")
                     Text(text = "Gagal")
                 },
                 text = {
