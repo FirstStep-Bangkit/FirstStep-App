@@ -44,7 +44,6 @@ interface ApiService {
 
     @GET("dashboard")
     fun dashboard(
-        //kalo bukan ini ya authorization9
         @Header("Authorization") authorization: String
     ): Call<DashboardResponse>
 
@@ -74,7 +73,7 @@ interface ApiService {
 
     @GET("personality")
     fun personality(
-        @Header("Authorization9") authorization: String
+        @Header("Authorization") authorization: String
     ): Call<PersonalityResponse>
 
     @POST("predict")

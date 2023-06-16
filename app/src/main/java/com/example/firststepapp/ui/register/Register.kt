@@ -278,16 +278,6 @@ fun Register(
             onClick = {
                 viewModel.register(context, firstName.text, lastName.text, email, password) { success ->
                     if (success) {
-                        //registerStatus = RegisterStatus.SUCCESS
-                        //registerMessage = "Register berhasil"
-                        //showRegisterStatus = true
-
-                        //CoroutineScope(Dispatchers.Main).launch {
-                        //    delay(5000L)
-                        //    registerStatus = RegisterStatus.NONE
-                        //    showRegisterStatus = false
-                        //}
-
                         Toast.makeText(context, "Registrasi berhasil!", Toast.LENGTH_SHORT).show()
                         navController.navigate(Screen.Login.route) {
                             popUpTo(Screen.Register.route) { inclusive = true }

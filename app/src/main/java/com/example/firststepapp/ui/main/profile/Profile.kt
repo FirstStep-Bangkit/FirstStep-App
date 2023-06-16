@@ -97,7 +97,6 @@ fun Profile(
                 .verticalScroll(rememberScrollState())
         ) {
             Header()
-            //Identity(profileResponse?.profileResult)//, onProfilePictureClick = {  })
             Identity(profileResponse?.profileResult, viewModel, token)
             Status(profileResponse?.profileResult)
             Setting(navControl, authViewModel, viewModel)
