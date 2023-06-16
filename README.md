@@ -20,7 +20,7 @@ This application is an Indonesian MBTI test (16 personality) application which i
 | Cloud Computing    | [FirstStep-API](https://github.com/FirstStep-Bangkit/firststep-api.git)                |
 | Machine Learning   | [FirstStep-Model](https://github.com/FirstStep-Bangkit/FirstStep-Model.git)                |
 # Usage
-## Requireement
+## Requirement
 1. Android Studio Flamingo (support jetpack compose material 3)
 2. Minimum SDK 24 (Android 7.0)
 3. PC/Laptop
