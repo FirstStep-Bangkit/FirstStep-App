@@ -27,6 +27,9 @@ import java.io.File
 
 class MainViewModel(private val userPreferences: UserPreferences) : ViewModel() {
 
+    private val _isLoading = MutableLiveData<Boolean>()
+    val isLoading: LiveData<Boolean> = _isLoading
+
     val dashboardResponse = MutableLiveData<DashboardResponse>()
     val _dashboardResponse: LiveData<DashboardResponse> = dashboardResponse
 
@@ -60,6 +63,7 @@ class MainViewModel(private val userPreferences: UserPreferences) : ViewModel() 
     }
 
     fun dashboard(context: Context,token: String) {
+        _isLoading.value = true
         val client = ApiConfig.getApiService(context).dashboard(token)
         client.enqueue(object : Callback<DashboardResponse> {
             override fun onResponse(
@@ -68,6 +72,7 @@ class MainViewModel(private val userPreferences: UserPreferences) : ViewModel() 
             ) {
                 val responseBody = response.body()
                 if (response.isSuccessful && responseBody != null) {
+                    _isLoading.value = false
                     dashboardResponse.value = response.body()
                 } else {
                     Log.e(TAG, "onFailure: ${response.code()}")
@@ -76,11 +81,13 @@ class MainViewModel(private val userPreferences: UserPreferences) : ViewModel() 
 
             override fun onFailure(call: Call<DashboardResponse>, t: Throwable) {
                 Log.e(TAG, "onFailure: ${t.message}")
+                _isLoading.value = false
             }
         })
     }
 
     fun profile(context: Context,token: String){
+        _isLoading.value = true
         val client = ApiConfig.getApiService(context).profile(token)
         client.enqueue(object : Callback<ProfileResponse>{
             override fun onResponse(
@@ -89,6 +96,7 @@ class MainViewModel(private val userPreferences: UserPreferences) : ViewModel() 
             ) {
                 val responseBody = response.body()
                 if (response.isSuccessful && responseBody != null) {
+                    _isLoading.value = false
                     profileResponse.value = response.body()
                 } else {
                     Log.e(TAG, "onFailure: ${response.code()}")
@@ -97,12 +105,14 @@ class MainViewModel(private val userPreferences: UserPreferences) : ViewModel() 
 
             override fun onFailure(call: Call<ProfileResponse>, t: Throwable) {
                 Log.e(TAG, "onFailure: ${t.message}")
+                _isLoading.value = false
             }
 
         })
     }
 
     fun changePassword(context: Context,oldPassword: String, newPassword: String, token: String, callback: (Boolean) -> Unit){
+        _isLoading.value = true
         val client = ApiConfig.getApiService(context).changePassword(token,oldPassword,newPassword)
         client.enqueue(object : Callback<ChangePasswordResponse>{
             override fun onResponse(
@@ -111,6 +121,7 @@ class MainViewModel(private val userPreferences: UserPreferences) : ViewModel() 
             ) {
                 val responseBody = response.body()
                 if (response.isSuccessful && responseBody != null){
+                    _isLoading.value = false
                     changePasswordResponse.value = response.body()
                     callback(true)
                 } else {
@@ -122,12 +133,14 @@ class MainViewModel(private val userPreferences: UserPreferences) : ViewModel() 
             override fun onFailure(call: Call<ChangePasswordResponse>, t: Throwable) {
                 Log.e(TAG, "onFailure: ${t.message}")
                 callback(false)
+                _isLoading.value = false
             }
 
         })
     }
 
     fun deleteUser(context: Context,token: String,username: String, callback: (Boolean) -> Unit){
+        _isLoading.value = true
         val client = ApiConfig.getApiService(context).deleteUser(token,username)
         client.enqueue(object : Callback<DeleteUserResponse>{
             override fun onResponse(
@@ -136,6 +149,7 @@ class MainViewModel(private val userPreferences: UserPreferences) : ViewModel() 
             ) {
                 val responseBody = response.body()
                 if (response.isSuccessful && responseBody != null){
+                    _isLoading.value = false
                     deleteUserResponse.value = response.body()
                     callback(true)
                 } else {
@@ -147,12 +161,14 @@ class MainViewModel(private val userPreferences: UserPreferences) : ViewModel() 
             override fun onFailure(call: Call<DeleteUserResponse>, t: Throwable) {
                 Log.e(TAG, "onFailure: ${t.message}")
                 callback(false)
+                _isLoading.value = false
             }
 
         })
     }
 
     fun getQuiz(context: Context,token: String){
+        _isLoading.value = true
         val client = ApiConfig.getApiService(context).quiz(token)
         client.enqueue(object : Callback<QuizResponse>{
             override fun onResponse(
@@ -161,6 +177,7 @@ class MainViewModel(private val userPreferences: UserPreferences) : ViewModel() 
             ) {
                 val responseBody = response.body()
                 if (response.isSuccessful && responseBody != null) {
+                    _isLoading.value = false
                     quizResponse.value = response.body()
                 } else {
                     Log.e(TAG, "onFailure: ${response.code()}")
@@ -169,12 +186,14 @@ class MainViewModel(private val userPreferences: UserPreferences) : ViewModel() 
 
             override fun onFailure(call: Call<QuizResponse>, t: Throwable) {
                 Log.e(TAG, "onFailure: ${t.message}")
+                _isLoading.value = false
             }
 
         })
     }
 
     fun personality(context: Context,token: String) {
+        _isLoading.value = true
         val client = ApiConfig.getApiService(context).personality(token)
         client.enqueue(object : Callback<PersonalityResponse> {
             override fun onResponse(
@@ -183,6 +202,7 @@ class MainViewModel(private val userPreferences: UserPreferences) : ViewModel() 
             ) {
                 val responseBody = response.body()
                 if (response.isSuccessful && responseBody != null) {
+                    _isLoading.value = false
                     personalityResponse.value = response.body()
                 } else {
                     Log.e(TAG, "onFailure: ${response.code()}")
@@ -191,11 +211,13 @@ class MainViewModel(private val userPreferences: UserPreferences) : ViewModel() 
 
             override fun onFailure(call: Call<PersonalityResponse>, t: Throwable) {
                 Log.e(TAG, "onFailure: ${t.message}")
+                _isLoading.value = false
             }
         })
     }
 
     fun predict(context: Context, authorization: String, input: List<Int>) {
+        _isLoading.value = true
         val predictRequest = PredictRequest(input)
         val client = ApiConfig.getApiService(context).predict(authorization, predictRequest)
         client.enqueue(object : Callback<AnswerResponse> {
@@ -205,6 +227,7 @@ class MainViewModel(private val userPreferences: UserPreferences) : ViewModel() 
             ) {
                 val responseBody = response.body()
                 if (response.isSuccessful && responseBody != null) {
+                    _isLoading.value = false
                     answerResponse.value = response.body()
 
                 } else {
@@ -213,13 +236,14 @@ class MainViewModel(private val userPreferences: UserPreferences) : ViewModel() 
             }
 
             override fun onFailure(call: Call<AnswerResponse>, t: Throwable) {
-
+                _isLoading.value = false
                 Log.e(TAG, "onFailure: ${t.message}")
             }
         })
     }
 
     fun deleteProfile(context: Context, token: String, callback: (Boolean) -> Unit){
+        _isLoading.value = true
         val client = ApiConfig.getApiService(context).deleteProfile(token)
         client.enqueue(object : Callback<DeleteProfileResponse> {
             override fun onResponse(
@@ -228,6 +252,7 @@ class MainViewModel(private val userPreferences: UserPreferences) : ViewModel() 
             ) {
                 val responseBody = response.body()
                 if (response.isSuccessful && responseBody != null) {
+                    _isLoading.value = false
                     deleteProfileResponse.value = response.body()
                     callback(true)
                 } else {
@@ -239,11 +264,13 @@ class MainViewModel(private val userPreferences: UserPreferences) : ViewModel() 
             override fun onFailure(call: Call<DeleteProfileResponse>, t: Throwable) {
                 Log.e(TAG, "onFailure: ${t.message}")
                 callback(false)
+                _isLoading.value = false
             }
         })
     }
 
     fun uploadPhotoProfile(context: Context, token: String, photo: File, callback: (Boolean) -> Unit){
+        _isLoading.value = true
 
         val requestImageFile = photo.asRequestBody("image/jpeg".toMediaType())
         val imageMultipart: MultipartBody.Part = MultipartBody.Part.createFormData(
@@ -258,6 +285,7 @@ class MainViewModel(private val userPreferences: UserPreferences) : ViewModel() 
             ) {
                 val responseBody = response.body()
                 if (response.isSuccessful && responseBody != null) {
+                    _isLoading.value = false
                     uploadPhotoProfileResponse.value = response.body()
                     callback(true)
                 } else {
@@ -268,6 +296,7 @@ class MainViewModel(private val userPreferences: UserPreferences) : ViewModel() 
 
             override fun onFailure(call: Call<UploadPhotoProfileResponse>, t: Throwable) {
                 Log.e(TAG, "onFailure: ${t.message}")
+                _isLoading.value = false
                 callback(false)
             }
 

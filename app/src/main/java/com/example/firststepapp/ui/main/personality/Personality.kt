@@ -7,6 +7,7 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,6 +23,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -65,6 +67,13 @@ fun Personality (
     viewModel: MainViewModel,
     token: String
 ){
+
+    var isLoading by remember { mutableStateOf(false) }
+
+    viewModel.isLoading.observeAsState().value?.let {
+        isLoading = it
+    }
+
     Scaffold { innerPadding ->
 
         val personalityResponse by viewModel._personalityResponse.observeAsState()
@@ -90,6 +99,18 @@ fun Personality (
                 )
             }
             ButtonChat(navControl = navControl)
+
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(vertical = 20.dp)
+            ) {
+                if (isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
+            }
         }
     }
     LaunchedEffectComponent(viewModel, token)

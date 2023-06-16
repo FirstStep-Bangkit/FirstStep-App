@@ -44,7 +44,8 @@ interface ApiService {
 
     @GET("dashboard")
     fun dashboard(
-        @Header("Authorization9") authorization: String
+        //kalo bukan ini ya authorization9
+        @Header("Authorization") authorization: String
     ): Call<DashboardResponse>
 
     @GET("profile")

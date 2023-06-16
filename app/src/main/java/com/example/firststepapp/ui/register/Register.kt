@@ -22,6 +22,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,6 +30,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -56,6 +58,13 @@ fun Register(
     navController: NavHostController,
     viewModel: AuthViewModel
 ){
+
+    var isLoading by remember { mutableStateOf(false) }
+
+    viewModel.isLoading.observeAsState().value?.let {
+        isLoading = it
+    }
+
     Column(
         modifier = Modifier
             .padding(40.dp)
@@ -306,6 +315,18 @@ fun Register(
                 text = "Daftar",
                 style = MaterialTheme.typography.bodyMedium
             )
+        }
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(vertical = 20.dp)
+        ) {
+            if (isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
         }
 
         if (registerStatus != RegisterStatus.NONE) {

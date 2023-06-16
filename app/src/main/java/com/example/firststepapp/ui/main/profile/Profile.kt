@@ -36,6 +36,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -78,6 +79,13 @@ fun Profile(
     authViewModel: AuthViewModel,
     token: String
 ) {
+
+    var isLoading by remember { mutableStateOf(false) }
+
+    viewModel.isLoading.observeAsState().value?.let {
+        isLoading = it
+    }
+
     Scaffold { innerPadding ->
 
         val profileResponse by viewModel._profileResponse.observeAsState()
@@ -102,6 +110,17 @@ fun Profile(
                     }
                 }
             )
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(vertical = 20.dp)
+            ) {
+                if (isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
+            }
         }
     }
 
@@ -334,7 +353,11 @@ fun Status(
                 Spacer(modifier = Modifier.weight(0.1f))
                 Text(
                     modifier = Modifier.padding(end = 20.dp),
-                    text = profileResult?.mbti.toString(),
+                    text = if (profileResult?.mbti != null) {
+                        profileResult.mbti.toString()
+                    } else {
+                        "belum tes"
+                    },
                     style = MaterialTheme.typography.titleMedium.copy(
                         color = MaterialTheme.colorScheme.onPrimary
                     )
